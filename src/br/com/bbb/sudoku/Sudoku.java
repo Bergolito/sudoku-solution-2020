@@ -10,14 +10,14 @@ public class Sudoku {
 	// constantes
 	private static final String DEBUG_MODE = "DEBUG";
 	private static final String PRODUCAO_MODE = "PROD";
-	private static final String REGRA01 = "RG01";
-	private static final String REGRA02_AN_HORIZONTAL = "RG02-Análise Horizontal";
-	private static final String REGRA03_AN_VERTICAL = "RG03-Análise Vertical";
-	private static final String REGRA04 = "RG04";
-	private static final String REGRA05 = "RG05";
-	private static final String REGRA06_LINHA = "RG06-Linha";
-	private static final String REGRA06_COLUNA = "RG06-Coluna";
-	private static final String REGRA08 = "RG08";
+	private static final String REGRA01 = "Regra01-Resta 01 possib.";
+	private static final String REGRA02_AN_HORIZONTAL = "Regra02-Análise Horizontal";
+	private static final String REGRA03_AN_VERTICAL = "Regra03-Análise Vertical";
+	private static final String REGRA04 = "Regra04";
+	private static final String REGRA05 = "Regra05";
+	private static final String REGRA06_LINHA = "Regra06-Linha";
+	private static final String REGRA06_COLUNA = "Regra06-Coluna";
+	private static final String REGRA08 = "Regra08";
 	
 	// atributos
 	private List<Integer> numerosPossiveis = new ArrayList<>();
@@ -508,6 +508,26 @@ public class Sudoku {
 	}
 	
 	public void analisaSolucao(int[][] matriz) {
+		if(matriz.length == 4) {
+			analisaSolucao4X4(matriz);
+		} else if(matriz.length == 9) {
+			analisaSolucao9X9(matriz);
+		}
+	}
+
+	public void analisaSolucao4X4(int[][] matriz) {
+		
+		do {
+
+			// Regra 01
+			regra01(matriz);
+
+		} while (SudokuUtil.existeCelulaVazia(matriz));
+		
+		System.out.println("\n\n TERMINOU ANALISE. Qtd infericoes = "+(++SudokuUtil.infericoes));
+	}
+
+	public void analisaSolucao9X9(int[][] matriz) {
 		
 		do {
 
@@ -760,15 +780,6 @@ public class Sudoku {
 		SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaFalta, colunaFalta, matriz, REGRA03_AN_VERTICAL);
 	}
 	
-	private int retornaQuadrantesVazios(int linhaQuadrante01, int linhaQuadrante02, int linhaQuadrante03) {
-		int contadorQuadrantesVazios = 0;
-		if(linhaQuadrante01 == -1) contadorQuadrantesVazios++;
-		if(linhaQuadrante02 == -1) contadorQuadrantesVazios++;
-		if(linhaQuadrante03 == -1) contadorQuadrantesVazios++;		
-		
-		return contadorQuadrantesVazios;
-	}
-
 	// Reduzir de 79 para 15
 	private void analisaCamadaHorizontal01QuadrantePreenchido(
 		int[][] matriz, List<Integer> linhasPossiveis) {
@@ -839,7 +850,7 @@ public class Sudoku {
 							colunasQuadrante = SudokuUtil.retornaColunasQuadrante(quadranteNaoPreenchido02, matriz);
 
 							int qtdNumPreenchidosLinha = 
-								qtdNumPreenchidosNaLinhaNoQuadrante(linhaQuadrante02, quadranteNaoPreenchido02, matriz);
+								SudokuUtil.qtdNumPreenchidosNaLinhaNoQuadrante(linhaQuadrante02, quadranteNaoPreenchido02, matriz);
 							int colunaVazia01 = -1;
 							int colunaVazia02 = -1;
 							
@@ -980,7 +991,7 @@ public class Sudoku {
 								linhasQuadrante = SudokuUtil.retornaLinhasQuadrante(quadranteNaoPreenchido02, matriz);
 								
 								int qtdNumPreenchidosColuna = 
-									qtdNumPreenchidosNaColunaNoQuadrante(colunaQuadrante02, quadranteNaoPreenchido02, matriz);
+									SudokuUtil.qtdNumPreenchidosNaColunaNoQuadrante(colunaQuadrante02, quadranteNaoPreenchido02, matriz);
 
 								int linhaVazia01 = -1;
 								int linhaVazia02 = -1;
@@ -1059,9 +1070,9 @@ public class Sudoku {
 
 		int linhaNumeroAnalisadoPrimeiroQuadrante = -1;
 		int numerosPreenchidosLinha01 = 
-				qtdNumPreenchidosNaLinhaNoQuadrante(linhasRestantesParaAnalise.get(0), quadranteNaoPreenchido01, matriz);
+			SudokuUtil.qtdNumPreenchidosNaLinhaNoQuadrante(linhasRestantesParaAnalise.get(0), quadranteNaoPreenchido01, matriz);
 		int numerosPreenchidosLinha02 = 
-				qtdNumPreenchidosNaLinhaNoQuadrante(linhasRestantesParaAnalise.get(1), quadranteNaoPreenchido01, matriz);
+			SudokuUtil.qtdNumPreenchidosNaLinhaNoQuadrante(linhasRestantesParaAnalise.get(1), quadranteNaoPreenchido01, matriz);
 		
 		int colunaVazia = -1;
 		List<Integer> colunasQuadrante = new ArrayList<>();
@@ -1104,64 +1115,6 @@ public class Sudoku {
 			List<Integer> colunasRestantesParaAnalise) {
 		
 		return -1;
-	}
-	
-	private int qtdNumPreenchidosNaLinhaNoQuadrante(int linhaAnalisada, int quadrante, int[][] matriz) {
-		int contador = 0;
-		int colunaInicio = -1;
-		int colunaFim = -1;
-		
-		if(quadrante == 1 || quadrante == 4 || quadrante == 7) {
-			
-			colunaInicio = 0;
-			colunaFim = 2;
-		} 
-		else if(quadrante == 2 || quadrante == 5 || quadrante == 8) {
-			
-			colunaInicio = 3;
-			colunaFim = 5;
-		}
-		else if(quadrante == 3 || quadrante == 6 || quadrante == 9) {
-			
-			colunaInicio = 6;
-			colunaFim = 8;
-		}
-
-		for (int j = colunaInicio; j <= colunaFim; j++) {
-			if(matriz[linhaAnalisada][j] != 0) {
-				contador++;
-			}
-		}
-		return contador;
-	}
-
-	private int qtdNumPreenchidosNaColunaNoQuadrante(int colunaAnalisada, int quadrante, int[][] matriz) {
-		int contador = 0;
-		int linhaInicio = -1;
-		int linhaFim = -1;
-		
-		if(quadrante == 1 || quadrante == 2 || quadrante == 3) {
-			
-			linhaInicio = 0;
-			linhaFim = 2;
-		} 
-		else if(quadrante == 4 || quadrante == 5 || quadrante == 6) {
-			
-			linhaInicio = 3;
-			linhaFim = 5;
-		}
-		else if(quadrante == 7 || quadrante == 8 || quadrante == 8) {
-			
-			linhaInicio = 6;
-			linhaFim = 8;
-		}
-
-		for (int i = linhaInicio; i <= linhaFim; i++) {
-			if(matriz[i][colunaAnalisada] != 0) {
-				contador++;
-			}
-		}
-		return contador;
 	}
 	
 	private static void exibirMsg(String msg, String mode) {
@@ -1211,7 +1164,7 @@ public class Sudoku {
 						linhaQuadrante03 = SudokuUtil.qualLinhaNumeroEstaNoQuadrante(numeroAnalisado, quandrantesPossiveis.get(2), matriz); // 2
 						
 						int contadorQuadrantesVazios = 					
-								retornaQuadrantesVazios(linhaQuadrante01, linhaQuadrante02, linhaQuadrante03); 
+								SudokuUtil.retornaQuadrantesVazios(linhaQuadrante01, linhaQuadrante02, linhaQuadrante03); 
 						
 						if(contadorQuadrantesVazios == 1) {
 
@@ -1310,7 +1263,7 @@ public class Sudoku {
 						colunaQuadrante03 = SudokuUtil.qualColunaNumeroEstaNoQuadrante(numeroAnalisado, quandrantesPossiveis.get(2), matriz); // 2
 						
 						int contadorQuadrantesVazios = 					
-								retornaQuadrantesVazios(colunaQuadrante01, colunaQuadrante02, colunaQuadrante03); 
+								SudokuUtil.retornaQuadrantesVazios(colunaQuadrante01, colunaQuadrante02, colunaQuadrante03); 
 						
 						if(contadorQuadrantesVazios == 1) {
 

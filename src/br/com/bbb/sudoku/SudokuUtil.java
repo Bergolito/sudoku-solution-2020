@@ -20,6 +20,15 @@ public class SudokuUtil {
 		//
 	}
 
+	public static int retornaQuadrantesVazios(int linhaQuadrante01, int linhaQuadrante02, int linhaQuadrante03) {
+		int contadorQuadrantesVazios = 0;
+		if(linhaQuadrante01 == -1) contadorQuadrantesVazios++;
+		if(linhaQuadrante02 == -1) contadorQuadrantesVazios++;
+		if(linhaQuadrante03 == -1) contadorQuadrantesVazios++;		
+		
+		return contadorQuadrantesVazios;
+	}
+	
 	public static int celulasRestantesLinha(int linha, int[][] matriz) {
 		int contador = 0;
 		for (int j = 0; j < matriz.length; j++) {
@@ -211,10 +220,9 @@ public class SudokuUtil {
 	public static Set<Integer> pegaElementosQuadrante(int linha, int coluna, int[][] matriz) {
 		Set<Integer> conjuntoElementos = new HashSet<>();
 		
-		if(linha == 4 && coluna == 4) {
+		if(matriz.length == 4) {
 			conjuntoElementos = pegaElementosQuadrante4X4(linha, coluna, matriz);
-			
-		} else if(linha == 9 && coluna == 9) {
+		} else if(matriz.length == 9) {
 			conjuntoElementos = pegaElementosQuadrante9X9(linha, coluna, matriz);
 		}
 		
@@ -475,6 +483,62 @@ public class SudokuUtil {
 	}
 	
 	public static void imprimeMatriz(int[][] matriz) {
+		//
+		if(matriz.length == 4) {
+			imprimeMatriz4X4(matriz);
+		}
+		else if(matriz.length == 9) {
+			imprimeMatriz9X9(matriz);
+		}
+	}
+	
+	public static void imprimeMatriz4X4(int[][] matriz) {
+		System.out.print("==================\n");
+		for (int i = 0; i < matriz.length; i++) {
+			
+			if(i != 2 ) {
+				System.out.print(i+" [");
+			} else if(i == 2) {
+				System.out.println("  -------------");
+				System.out.print(i+" [");
+			}
+			for (int j = 0; j < matriz[i].length; j++) {
+				
+				if(j != matriz[i].length-1) {
+					
+					if(matriz[i][j] != 0) {
+						
+						if(j != 2 ) {
+							System.out.print(" "+matriz[i][j]);	
+						} else if(j == 2) {
+							System.out.print(" | "+matriz[i][j]);
+						}
+							
+					} else {
+						
+						if(j != 2 ) {
+							System.out.print(" _");	
+						} else if(j == 2) {
+							System.out.print(" | _");
+						}
+						
+					}
+					
+				}
+				else {
+					
+					if(matriz[i][j] != 0) {
+						System.out.println(" "+matriz[i][j]+" ]");	
+
+					} else {
+						System.out.println(" _ ]");
+					}
+				}
+			}
+		}
+	}
+	
+	public static void imprimeMatriz9X9(int[][] matriz) {
 		System.out.print("=================================\n");
 		for (int i = 0; i < matriz.length; i++) {
 			
@@ -1293,4 +1357,61 @@ public class SudokuUtil {
 		return pos;
 	}
 	
+	public static int qtdNumPreenchidosNaLinhaNoQuadrante(int linhaAnalisada, int quadrante, int[][] matriz) {
+		int contador = 0;
+		int colunaInicio = -1;
+		int colunaFim = -1;
+		
+		if(quadrante == 1 || quadrante == 4 || quadrante == 7) {
+			
+			colunaInicio = 0;
+			colunaFim = 2;
+		} 
+		else if(quadrante == 2 || quadrante == 5 || quadrante == 8) {
+			
+			colunaInicio = 3;
+			colunaFim = 5;
+		}
+		else if(quadrante == 3 || quadrante == 6 || quadrante == 9) {
+			
+			colunaInicio = 6;
+			colunaFim = 8;
+		}
+
+		for (int j = colunaInicio; j <= colunaFim; j++) {
+			if(matriz[linhaAnalisada][j] != 0) {
+				contador++;
+			}
+		}
+		return contador;
+	}
+
+	public static int qtdNumPreenchidosNaColunaNoQuadrante(int colunaAnalisada, int quadrante, int[][] matriz) {
+		int contador = 0;
+		int linhaInicio = -1;
+		int linhaFim = -1;
+		
+		if(quadrante == 1 || quadrante == 2 || quadrante == 3) {
+			
+			linhaInicio = 0;
+			linhaFim = 2;
+		} 
+		else if(quadrante == 4 || quadrante == 5 || quadrante == 6) {
+			
+			linhaInicio = 3;
+			linhaFim = 5;
+		}
+		else if(quadrante == 7 || quadrante == 8 || quadrante == 8) {
+			
+			linhaInicio = 6;
+			linhaFim = 8;
+		}
+
+		for (int i = linhaInicio; i <= linhaFim; i++) {
+			if(matriz[i][colunaAnalisada] != 0) {
+				contador++;
+			}
+		}
+		return contador;
+	}	
 }

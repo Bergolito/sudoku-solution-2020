@@ -51,43 +51,45 @@ public class Sudoku9x9FacilTest {
 	
 	public static int[][] getMatrizInicial(int linhas, int colunas) {
 		int[][] matriz = new int [linhas][colunas];
-		//
+		
+		// 0 [ _ _ 3 | _ _ _ | _ _ _ ]
 		matriz[0][2] = 3;
-		//
+		// 1 [ _ 8 _ | _ 1 7 | 3 6 _ ]
 		matriz[1][1] = 8;
 		matriz[1][4] = 1;
 		matriz[1][5] = 7;
 		matriz[1][6] = 3;
 		matriz[1][7] = 6;
-		//
+		// 2 [ _ 2 _ | _ 9 3 | _ _ 8 ]
 		matriz[2][1] = 2;
 		matriz[2][4] = 9;
 		matriz[2][5] = 3;
 		matriz[2][8] = 8;
-		//
+		// 3 [ _ 5 2 | _ _ _ | _ _ _ ]
 		matriz[3][1] = 5;
 		matriz[3][2] = 2;
-		//
+		// 4 [ _ 6 4 | _ _ _ | 1 3 _ ]
 		matriz[4][1] = 6;
 		matriz[4][2] = 4;
 		matriz[4][6] = 1;
 		matriz[4][7] = 3;
-		//
+		// 5 [ _ _ _ | _ _ _ | 5 4 _ ]
 		matriz[5][6] = 5;
 		matriz[5][7] = 4;
-		//
+		// 6 [ 1 _ _ | 5 7 _ | _ 8 _ ]
 		matriz[6][0] = 1;
 		matriz[6][3] = 5;
 		matriz[6][4] = 7;
 		matriz[6][7] = 8;
-		//
+		// 7 [ _ 7 6 | 1 4 _ | _ 2 _ ]
 		matriz[7][1] = 7;
 		matriz[7][2] = 6;
 		matriz[7][3] = 1;
 		matriz[7][4] = 4;
 		matriz[7][7] = 2;
-		//
+		// 8 [ _ _ _ | _ _ _ | 7 _ _ ]
 		matriz[8][6] = 7;
+		
 		return matriz;
 	}
 	
