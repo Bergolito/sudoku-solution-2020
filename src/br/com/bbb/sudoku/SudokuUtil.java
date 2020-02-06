@@ -20,15 +20,6 @@ public class SudokuUtil {
 		//
 	}
 
-//	public static String retornaNumerosPossibs(int i, int j, int[][] matriz) {
-//		StringBuilder str = new StringBuilder();
-//		for (int num : qtdPossibilidadesCelula(i, j, matriz)) {
-//			str.append(" "+num);
-//		}
-//		
-//		return str.toString();
-//	}
-	
 	public static int celulasRestantesLinha(int linha, int[][] matriz) {
 		int contador = 0;
 		for (int j = 0; j < matriz.length; j++) {
@@ -69,16 +60,13 @@ public class SudokuUtil {
 	
 	public static List<Integer> retornaColunasQuadrante(int quadrante, int[][] matriz) {
 		List<Integer> colunas = new ArrayList<>();
-		
-		// linhas 0, 1, 2 
+		 
 		if(quadrante == 1 || quadrante == 4 || quadrante == 7) {
-			colunas.add(0);colunas.add(1);colunas.add(2);
-		
+			colunas.add(0);colunas.add(1);colunas.add(2); // colunas 0, 1, 2
 		} else if(quadrante == 2 || quadrante == 5 || quadrante == 8) {
-			colunas.add(3);colunas.add(4);colunas.add(5);
-			
+			colunas.add(3);colunas.add(4);colunas.add(5); // colunas 3, 4, 5
 		} else if(quadrante == 3 || quadrante == 6 || quadrante == 9) {
-			colunas.add(6);colunas.add(7);colunas.add(8);
+			colunas.add(6);colunas.add(7);colunas.add(8); // colunas 6, 7, 8
 		}
 
 		return colunas;
@@ -86,16 +74,13 @@ public class SudokuUtil {
 
 	public static List<Integer> retornaLinhasQuadrante(int quadrante, int[][] matriz) {
 		List<Integer> linhas = new ArrayList<>();
-		
-		// linhas 0, 1, 2 
+		 
 		if(quadrante == 1 || quadrante == 2 || quadrante == 3) {
-			linhas.add(0);linhas.add(1);linhas.add(2);
-		
+			linhas.add(0);linhas.add(1);linhas.add(2); // linhas 0, 1, 2
 		} else if(quadrante == 4 || quadrante == 5 || quadrante == 6) {
-			linhas.add(3);linhas.add(4);linhas.add(5);
-			
+			linhas.add(3);linhas.add(4);linhas.add(5); // linhas 3, 4, 5
 		} else if(quadrante == 7 || quadrante == 8 || quadrante == 9) {
-			linhas.add(6);linhas.add(7);linhas.add(8);
+			linhas.add(6);linhas.add(7);linhas.add(8); // linhas 6, 7, 8
 		}
 
 		return linhas;
@@ -108,7 +93,7 @@ public class SudokuUtil {
 		int colunaInicio = -1;
 		int colunaFim = -1;
 		
-		int[] coordenadas = retornaCoordenadasQuadrante(quadrante);
+		int[] coordenadas = retornaCoordenadasQuadrante(quadrante, matriz);
 		linhaInicio = coordenadas[0];
 		linhaFim = coordenadas[1];
 		colunaInicio = coordenadas[2];
@@ -132,7 +117,7 @@ public class SudokuUtil {
 		int linhaFim = -1;
 		int colunaInicio = -1;
 		int colunaFim = -1;
-		int[] coordenadas = retornaCoordenadasQuadrante(quadrante);
+		int[] coordenadas = retornaCoordenadasQuadrante(quadrante, matriz);
 		
 		linhaInicio = coordenadas[0];
 		linhaFim = coordenadas[1];
@@ -193,9 +178,7 @@ public class SudokuUtil {
         } 
         
         Collections.sort(elementosRetorno);
-		List<Integer> numerosPossiveis = Arrays.asList(arrayNumerosPossiveis9X9);
-
-		return numerosPossiveis.stream()
+		return retornaNumerosPossiveis(matriz).stream()
 				.distinct().
 				filter(aObject -> !elementosRetorno.contains(aObject)).
 				collect(Collectors.toList());
@@ -341,12 +324,6 @@ public class SudokuUtil {
 			}
 		}
 		
-//		int[] coordenadas = retornaCoordenadasQuadrante(quadrante);
-//		linhaInicio = coordenadas[0];
-//		linhaFim = coordenadas[1];
-//		colunaInicio = coordenadas[2];
-//		colunaFim = coordenadas[3];
-
 		for (int i = linhaInicio; i < linhaFim; i++) {
 			for (int j = colunaInicio; j < colunaFim; j++) {
 				if(i != linha && j != coluna && matriz[i][j] != 0) {
@@ -364,7 +341,7 @@ public class SudokuUtil {
 		int linhaFim = 0;
 		int colunaInicio = 0;
 		int colunaFim = 0;
-		int[] coordenadas = retornaCoordenadasQuadrante(quadrante);
+		int[] coordenadas = retornaCoordenadasQuadrante(quadrante, matriz);
 
 		linhaInicio = coordenadas[0];
 		linhaFim = coordenadas[1];
@@ -385,7 +362,7 @@ public class SudokuUtil {
 		int linhaFim = -1;
 		int colunaInicio = -1;
 		int colunaFim = -1;
-		int[] coordenadas = retornaCoordenadasQuadrante(quadrante);
+		int[] coordenadas = retornaCoordenadasQuadrante(quadrante, matriz);
 
 		linhaInicio = coordenadas[0];
 		linhaFim = coordenadas[1];
@@ -622,14 +599,8 @@ public class SudokuUtil {
 		List<Integer> elementosQuad8 = retornaElementosQuadrante(8, matriz);
 		List<Integer> elementosQuad9 = retornaElementosQuadrante(9, matriz);
 		
-        Integer[] arrayNumerosPossiveis = null;
-		if(matriz.length == 4) {
-			arrayNumerosPossiveis = arrayNumerosPossiveis4X4;
-		} else if(matriz.length == 9) {
-			arrayNumerosPossiveis = arrayNumerosPossiveis9X9;
-		}
-
-		List<Integer> numerosPossiveis = Arrays.asList(arrayNumerosPossiveis);			
+		List<Integer> numerosPossiveis = retornaNumerosPossiveis(matriz);
+		
 		int restanteQuad1 = numerosPossiveis.stream()
 				.distinct().
 				filter(aObject -> !elementosQuad1.contains(aObject)).
@@ -693,14 +664,7 @@ public class SudokuUtil {
 		List<Integer> elementosQuad8 = retornaElementosQuadrante(8, matriz);
 		List<Integer> elementosQuad9 = retornaElementosQuadrante(9, matriz);
 		
-        Integer[] arrayNumerosPossiveis = null;
-		if(matriz.length == 4) {
-			arrayNumerosPossiveis = new Integer[] { 1, 2, 3, 4 };
-		} else if(matriz.length == 9) {
-			arrayNumerosPossiveis = new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-		}
-
-		List<Integer> numerosPossiveis = Arrays.asList(arrayNumerosPossiveis);			
+		List<Integer> numerosPossiveis = retornaNumerosPossiveis(matriz);
 		int restanteQuad1 = numerosPossiveis.stream()
 				.distinct().
 				filter(aObject -> !elementosQuad1.contains(aObject)).
@@ -753,6 +717,93 @@ public class SudokuUtil {
 		}
 	}
 	
+	public static int[] retornaNumeroSetarECoordenadasQuadrante(
+		int[][] matriz,
+		List<Integer> numerosPossiveis,
+		int restanteQuad1, int restanteQuad2, int restanteQuad3,
+		int restanteQuad4, int restanteQuad5, int restanteQuad6,
+		int restanteQuad7, int restanteQuad8, int restanteQuad9,
+		List<Integer> elementosQuad1, List<Integer> elementosQuad2, List<Integer> elementosQuad3,
+		List<Integer> elementosQuad4, List<Integer> elementosQuad5, List<Integer> elementosQuad6,
+		List<Integer> elementosQuad7, List<Integer> elementosQuad8, List<Integer> elementosQuad9) {
+		
+		int[] coordenadas = null;
+		int numeroSetar = -1;
+		int[] retorno = new int[5];
+		
+		if(restanteQuad1 == 1) {
+			numeroSetar = numerosPossiveis.stream()
+					.distinct().
+					filter(aObject -> !elementosQuad1.contains(aObject)).
+					collect(Collectors.toList()).get(0);
+			coordenadas = retornaCoordenadasQuadrante(1, matriz);
+		}
+		else if(restanteQuad2 == 1) {
+			numeroSetar = numerosPossiveis.stream()
+					.distinct().
+					filter(aObject -> !elementosQuad2.contains(aObject)).
+					collect(Collectors.toList()).get(0);
+			coordenadas = retornaCoordenadasQuadrante(2, matriz);
+		}
+		else if(restanteQuad3 == 1) {
+			numeroSetar = numerosPossiveis.stream()
+					.distinct().
+					filter(aObject -> !elementosQuad3.contains(aObject)).
+					collect(Collectors.toList()).get(0);
+			coordenadas = retornaCoordenadasQuadrante(3, matriz);
+		}
+		else if(restanteQuad4 == 1) {
+			numeroSetar = numerosPossiveis.stream()
+					.distinct().
+					filter(aObject -> !elementosQuad4.contains(aObject)).
+					collect(Collectors.toList()).get(0);
+			coordenadas = retornaCoordenadasQuadrante(4, matriz);
+		}
+		else if(restanteQuad5 == 1) {
+			numeroSetar = numerosPossiveis.stream()
+					.distinct().
+					filter(aObject -> !elementosQuad5.contains(aObject)).
+					collect(Collectors.toList()).get(0);
+			coordenadas = retornaCoordenadasQuadrante(5, matriz);
+		}
+		else if(restanteQuad6 == 1) {
+			numeroSetar = numerosPossiveis.stream()
+					.distinct().
+					filter(aObject -> !elementosQuad6.contains(aObject)).
+					collect(Collectors.toList()).get(0);
+			coordenadas = retornaCoordenadasQuadrante(6, matriz);
+		}
+		else if(restanteQuad7 == 1) {
+			numeroSetar = numerosPossiveis.stream()
+					.distinct().
+					filter(aObject -> !elementosQuad7.contains(aObject)).
+					collect(Collectors.toList()).get(0);
+			coordenadas = retornaCoordenadasQuadrante(7, matriz);
+		}
+		else if(restanteQuad8 == 1) {
+			numeroSetar = numerosPossiveis.stream()
+					.distinct().
+					filter(aObject -> !elementosQuad8.contains(aObject)).
+					collect(Collectors.toList()).get(0);
+			coordenadas = retornaCoordenadasQuadrante(8, matriz);
+		}
+		else if(restanteQuad9 == 1) {
+			numeroSetar = numerosPossiveis.stream()
+					.distinct().
+					filter(aObject -> !elementosQuad9.contains(aObject)).
+					collect(Collectors.toList()).get(0);
+			coordenadas = retornaCoordenadasQuadrante(9, matriz);
+		}
+		retorno[0] = numeroSetar;
+		retorno[1] = coordenadas[0]; 
+		retorno[2] = coordenadas[1];
+		retorno[3] = coordenadas[2];
+		retorno[4] = coordenadas[3];
+		
+		return retorno;
+	}
+	
+	// TODO Diminuir de 26 para 15
 	public static Posicao retornaQuadrante01PosicaoRestante(int[][] matriz) {
 		// quadrantes 1,2,3 
 		List<Integer> elementosQuad1 = retornaElementosQuadrante(1, matriz);
@@ -768,14 +819,7 @@ public class SudokuUtil {
 		List<Integer> elementosQuad8 = retornaElementosQuadrante(8, matriz);
 		List<Integer> elementosQuad9 = retornaElementosQuadrante(9, matriz);
 		
-        Integer[] arrayNumerosPossiveis = null;
-		if(matriz.length == 4) {
-			arrayNumerosPossiveis = new Integer[] { 1, 2, 3, 4 };
-		} else if(matriz.length == 9) {
-			arrayNumerosPossiveis = new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-		}
-
-		List<Integer> numerosPossiveis = Arrays.asList(arrayNumerosPossiveis);			
+		List<Integer> numerosPossiveis = retornaNumerosPossiveis(matriz);
 		int restanteQuad1 = numerosPossiveis.stream()
 				.distinct().
 				filter(aObject -> !elementosQuad1.contains(aObject)).
@@ -821,89 +865,25 @@ public class SudokuUtil {
 		int linhaFim = 0;
 		int colunaInicio = 0;
 		int colunaFim = 0;
-		int[] coordenadas = null;
 		
 		if(restanteQuad1 == 1 || restanteQuad2 == 1 || restanteQuad3 == 1 ||
 				restanteQuad4 == 1 || restanteQuad5 == 1 || restanteQuad6 == 1 ||
 				restanteQuad7 == 1 || restanteQuad8 == 1 || restanteQuad9 == 1) {
 			
-			if(restanteQuad1 == 1) {
-				numeroSetar = numerosPossiveis.stream()
-						.distinct().
-						filter(aObject -> !elementosQuad1.contains(aObject)).
-						collect(Collectors.toList()).get(0);
-				
-				coordenadas = retornaCoordenadasQuadrante(1);
-			}
-			else if(restanteQuad2 == 1) {
-				numeroSetar = numerosPossiveis.stream()
-						.distinct().
-						filter(aObject -> !elementosQuad2.contains(aObject)).
-						collect(Collectors.toList()).get(0);
-				
-				coordenadas = retornaCoordenadasQuadrante(2);
-			}
-			else if(restanteQuad3 == 1) {
-				numeroSetar = numerosPossiveis.stream()
-						.distinct().
-						filter(aObject -> !elementosQuad3.contains(aObject)).
-						collect(Collectors.toList()).get(0);
-				
-				coordenadas = retornaCoordenadasQuadrante(3);
-			}
-			else if(restanteQuad4 == 1) {
-				numeroSetar = numerosPossiveis.stream()
-						.distinct().
-						filter(aObject -> !elementosQuad4.contains(aObject)).
-						collect(Collectors.toList()).get(0);
-				
-				coordenadas = retornaCoordenadasQuadrante(4);
-			}
-			else if(restanteQuad5 == 1) {
-				numeroSetar = numerosPossiveis.stream()
-						.distinct().
-						filter(aObject -> !elementosQuad5.contains(aObject)).
-						collect(Collectors.toList()).get(0);
-				
-				coordenadas = retornaCoordenadasQuadrante(5);
-			}
-			else if(restanteQuad6 == 1) {
-				numeroSetar = numerosPossiveis.stream()
-						.distinct().
-						filter(aObject -> !elementosQuad6.contains(aObject)).
-						collect(Collectors.toList()).get(0);
-				
-				coordenadas = retornaCoordenadasQuadrante(6);
-			}
-			else if(restanteQuad7 == 1) {
-				numeroSetar = numerosPossiveis.stream()
-						.distinct().
-						filter(aObject -> !elementosQuad7.contains(aObject)).
-						collect(Collectors.toList()).get(0);
-				
-				coordenadas = retornaCoordenadasQuadrante(7);
-			}
-			else if(restanteQuad8 == 1) {
-				numeroSetar = numerosPossiveis.stream()
-						.distinct().
-						filter(aObject -> !elementosQuad8.contains(aObject)).
-						collect(Collectors.toList()).get(0);
-				
-				coordenadas = retornaCoordenadasQuadrante(8);
-			}
-			else if(restanteQuad9 == 1) {
-				numeroSetar = numerosPossiveis.stream()
-						.distinct().
-						filter(aObject -> !elementosQuad9.contains(aObject)).
-						collect(Collectors.toList()).get(0);
-				
-				coordenadas = retornaCoordenadasQuadrante(9);
-			}
-
-			linhaInicio = coordenadas[0];
-			linhaFim = coordenadas[1];
-			colunaInicio = coordenadas[2];
-			colunaFim = coordenadas[3];
+			int[] retorno = retornaNumeroSetarECoordenadasQuadrante(
+					matriz, numerosPossiveis,
+					restanteQuad1,  restanteQuad2,  restanteQuad3,
+					restanteQuad4,  restanteQuad5,  restanteQuad6,
+					restanteQuad7,  restanteQuad8,  restanteQuad9,
+					elementosQuad1, elementosQuad2, elementosQuad3,
+					elementosQuad4, elementosQuad5, elementosQuad6,
+					elementosQuad7, elementosQuad8, elementosQuad9);
+			
+			numeroSetar = retorno[0];
+			linhaInicio = retorno[1];
+			linhaFim = retorno[2];
+			colunaInicio = retorno[3];
+			colunaFim = retorno[4];
 
 			for (int i = linhaInicio; i <= linhaFim; i++) {
 				for (int j = colunaInicio; j <= colunaFim; j++) {
@@ -924,65 +904,105 @@ public class SudokuUtil {
 		}
 	}
 
-	public static int[] retornaCoordenadasQuadrante(int quadrante) {
+	public static int[] retornaCoordenadasQuadrante(int quadrante, int[][] matriz) {
 		int[] coordenadas = new int[4];
 
-		if(quadrante == 1) {
-			coordenadas[0]=0;
-			coordenadas[1]=2;
-			coordenadas[2]=0;
-			coordenadas[3]=2;
-		}
-		else if(quadrante == 2) {
-			coordenadas[0]=0;
-			coordenadas[1]=2;
-			coordenadas[2]=3;
-			coordenadas[3]=5;
-		}
-		else if(quadrante == 3) {
-			coordenadas[0]=0;
-			coordenadas[1]=2;
-			coordenadas[2]=6;
-			coordenadas[3]=8;
-		}
-		else if(quadrante == 4) {
-			coordenadas[0]=3;
-			coordenadas[1]=5;
-			coordenadas[2]=0;
-			coordenadas[3]=2;
-		}
-		else if(quadrante == 5) {
-			coordenadas[0]=3;
-			coordenadas[1]=5;
-			coordenadas[2]=3;
-			coordenadas[3]=5;
-		}
-		else if(quadrante == 6) {
-			coordenadas[0]=3;
-			coordenadas[1]=5;
-			coordenadas[2]=6;
-			coordenadas[3]=8;
-		}
-		else if(quadrante == 7) {
-			coordenadas[0]=6;
-			coordenadas[1]=8;
-			coordenadas[2]=0;
-			coordenadas[3]=2;
-		}
-		else if(quadrante == 8) {
-			coordenadas[0]=6;
-			coordenadas[1]=8;
-			coordenadas[2]=3;
-			coordenadas[3]=5;
-		}
-		else if(quadrante == 9) {
-			coordenadas[0]=6;
-			coordenadas[1]=8;
-			coordenadas[2]=6;
-			coordenadas[3]=8;
+		if(matriz.length == 4) {
+			if(quadrante == 1) {
+				coordenadas[0]=0;
+				coordenadas[1]=1;
+				coordenadas[2]=0;
+				coordenadas[3]=1;
+			}
+			if(quadrante == 2) {
+				coordenadas[0]=0;
+				coordenadas[1]=1;
+				coordenadas[2]=2;
+				coordenadas[3]=3;
+			}
+			if(quadrante == 3) {
+				coordenadas[0]=2;
+				coordenadas[1]=3;
+				coordenadas[2]=0;
+				coordenadas[3]=1;
+			}
+			if(quadrante == 4) {
+				coordenadas[0]=2;
+				coordenadas[1]=3;
+				coordenadas[2]=2;
+				coordenadas[3]=3;
+			}
+			
+		} else if(matriz.length == 9) {
+
+			if(quadrante == 1) {
+				coordenadas[0]=0;
+				coordenadas[1]=2;
+				coordenadas[2]=0;
+				coordenadas[3]=2;
+			}
+			else if(quadrante == 2) {
+				coordenadas[0]=0;
+				coordenadas[1]=2;
+				coordenadas[2]=3;
+				coordenadas[3]=5;
+			}
+			else if(quadrante == 3) {
+				coordenadas[0]=0;
+				coordenadas[1]=2;
+				coordenadas[2]=6;
+				coordenadas[3]=8;
+			}
+			else if(quadrante == 4) {
+				coordenadas[0]=3;
+				coordenadas[1]=5;
+				coordenadas[2]=0;
+				coordenadas[3]=2;
+			}
+			else if(quadrante == 5) {
+				coordenadas[0]=3;
+				coordenadas[1]=5;
+				coordenadas[2]=3;
+				coordenadas[3]=5;
+			}
+			else if(quadrante == 6) {
+				coordenadas[0]=3;
+				coordenadas[1]=5;
+				coordenadas[2]=6;
+				coordenadas[3]=8;
+			}
+			else if(quadrante == 7) {
+				coordenadas[0]=6;
+				coordenadas[1]=8;
+				coordenadas[2]=0;
+				coordenadas[3]=2;
+			}
+			else if(quadrante == 8) {
+				coordenadas[0]=6;
+				coordenadas[1]=8;
+				coordenadas[2]=3;
+				coordenadas[3]=5;
+			}
+			else if(quadrante == 9) {
+				coordenadas[0]=6;
+				coordenadas[1]=8;
+				coordenadas[2]=6;
+				coordenadas[3]=8;
+			}
+			
 		}
 		
 		return coordenadas;
+	}
+	
+	public static List<Integer> retornaNumerosPossiveis(int[][] matriz) {
+		Integer[] arrayNumerosPossiveis = null;
+		if(matriz.length == 4) {
+			arrayNumerosPossiveis = arrayNumerosPossiveis4X4;
+		} else if(matriz.length == 9) {
+			arrayNumerosPossiveis = arrayNumerosPossiveis9X9;
+		}
+		return Arrays.asList(arrayNumerosPossiveis);
 	}
 	
 	public static void resolveQuadrante02PosicoesRestantes(int[][] matriz) {
@@ -1013,14 +1033,7 @@ public class SudokuUtil {
 		List<Integer> elementosQuad8 = retornaElementosQuadrante(8, matriz);
 		List<Integer> elementosQuad9 = retornaElementosQuadrante(9, matriz);
         
-		// TODO retorna Numeros possiveis
-		if(matriz.length == 4) {
-			arrayNumerosPossiveis = arrayNumerosPossiveis4X4;
-		} else if(matriz.length == 9) {
-			arrayNumerosPossiveis = arrayNumerosPossiveis9X9;
-		}
-
-		List<Integer> numerosPossiveis = Arrays.asList(arrayNumerosPossiveis);
+		List<Integer> numerosPossiveis = retornaNumerosPossiveis(matriz);
 		
 		List<Integer> restanteQuad1 = numerosPossiveis.stream()
 				.distinct().
@@ -1074,7 +1087,7 @@ public class SudokuUtil {
 						filter(aObject -> !elementosQuad1.contains(aObject)).
 						collect(Collectors.toList()).get(1);
 
-				coordenadas = SudokuUtil.retornaCoordenadasQuadrante(1);
+				coordenadas = retornaCoordenadasQuadrante(1, matriz);
 			}
 			else if(restanteQuad2.size() == 2) {
 				numeroAnalisado01 = numerosPossiveis.stream()
@@ -1086,7 +1099,7 @@ public class SudokuUtil {
 						filter(aObject -> !elementosQuad2.contains(aObject)).
 						collect(Collectors.toList()).get(1);
 
-				coordenadas = SudokuUtil.retornaCoordenadasQuadrante(2);
+				coordenadas = retornaCoordenadasQuadrante(2, matriz);
 			}
 			else if(restanteQuad3.size() == 2) {
 				numeroAnalisado01 = numerosPossiveis.stream()
@@ -1098,7 +1111,7 @@ public class SudokuUtil {
 						filter(aObject -> !elementosQuad3.contains(aObject)).
 						collect(Collectors.toList()).get(1);
 
-				coordenadas = SudokuUtil.retornaCoordenadasQuadrante(3);
+				coordenadas = retornaCoordenadasQuadrante(3, matriz);
 			}
 			else if(restanteQuad4.size() == 2) {
 				numeroAnalisado01 = numerosPossiveis.stream()
@@ -1110,7 +1123,7 @@ public class SudokuUtil {
 						filter(aObject -> !elementosQuad4.contains(aObject)).
 						collect(Collectors.toList()).get(1);
 
-				coordenadas = SudokuUtil.retornaCoordenadasQuadrante(4);
+				coordenadas = retornaCoordenadasQuadrante(4, matriz);
 			}
 			else if(restanteQuad5.size() == 2) {
 				numeroAnalisado01 = numerosPossiveis.stream()
@@ -1122,7 +1135,7 @@ public class SudokuUtil {
 						filter(aObject -> !elementosQuad5.contains(aObject)).
 						collect(Collectors.toList()).get(1);
 
-				coordenadas = SudokuUtil.retornaCoordenadasQuadrante(5);
+				coordenadas = retornaCoordenadasQuadrante(5, matriz);
 			}
 			else if(restanteQuad6.size() == 2) {
 				numeroAnalisado01 = numerosPossiveis.stream()
@@ -1134,7 +1147,7 @@ public class SudokuUtil {
 						filter(aObject -> !elementosQuad6.contains(aObject)).
 						collect(Collectors.toList()).get(1);
 
-				coordenadas = SudokuUtil.retornaCoordenadasQuadrante(6);
+				coordenadas = retornaCoordenadasQuadrante(6, matriz);;
 			}
 			else if(restanteQuad7.size() == 2) {
 				numeroAnalisado01 = numerosPossiveis.stream()
@@ -1146,7 +1159,7 @@ public class SudokuUtil {
 						filter(aObject -> !elementosQuad7.contains(aObject)).
 						collect(Collectors.toList()).get(1);
 
-				coordenadas = SudokuUtil.retornaCoordenadasQuadrante(7);
+				coordenadas = retornaCoordenadasQuadrante(7, matriz);;
 			}
 			else if(restanteQuad8.size() == 2) {
 				numeroAnalisado01 = numerosPossiveis.stream()
@@ -1158,7 +1171,7 @@ public class SudokuUtil {
 						filter(aObject -> !elementosQuad8.contains(aObject)).
 						collect(Collectors.toList()).get(1);
 
-				coordenadas = SudokuUtil.retornaCoordenadasQuadrante(8);
+				coordenadas = retornaCoordenadasQuadrante(8, matriz);;
 			}
 			else if(restanteQuad9.size() == 2) {
 				numeroAnalisado01 = numerosPossiveis.stream()
@@ -1169,7 +1182,7 @@ public class SudokuUtil {
 						.distinct().
 						filter(aObject -> !elementosQuad9.contains(aObject)).
 						collect(Collectors.toList()).get(1);
-				coordenadas = SudokuUtil.retornaCoordenadasQuadrante(9);
+				coordenadas = retornaCoordenadasQuadrante(9, matriz);
 			}
 			
 			// Analisando numeroSetar01
@@ -1221,20 +1234,6 @@ public class SudokuUtil {
 					inferiuPelasLinhas = true;
 
 				}
-				
-				// procuras nas colunas
-//				if(!inferiuPelasLinhas) {
-//					if(SudokuUtil.existeNumeroNaColuna(numeroAnalisado01, colunaNumeroAnalisado01, matriz) == 1) {
-//						SudokuUtil.setValorNaLinhaColuna(numeroAnalisado02, linhaNumeroAnalisado02, colunaNumeroAnalisado02, matriz, "RG09");
-//						SudokuUtil.setValorNaLinhaColuna(numeroAnalisado01, linhaNumeroAnalisado01, colunaNumeroAnalisado01, matriz, "RG09");
-//					}
-//					else if(SudokuUtil.existeNumeroNaColuna(numeroAnalisado02, colunaNumeroAnalisado01, matriz) == 1) {
-//						SudokuUtil.setValorNaLinhaColuna(numeroAnalisado01, linhaNumeroAnalisado02, colunaNumeroAnalisado02, matriz, "RG09");
-//						SudokuUtil.setValorNaLinhaColuna(numeroAnalisado02, linhaNumeroAnalisado01, colunaNumeroAnalisado01, matriz, "RG09");
-//					}
-//					
-//				}
-
 			}
 		}
 	}
@@ -1250,15 +1249,7 @@ public class SudokuUtil {
 				}
 		}
 
-        Integer[] arrayNumerosPossiveis = null;
-		if(matriz.length == 4) {
-			arrayNumerosPossiveis = new Integer[] { 1, 2, 3, 4 };
-		} else if(matriz.length == 9) {
-			arrayNumerosPossiveis = new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-		}
-
-		List<Integer> numerosPossiveis = Arrays.asList(arrayNumerosPossiveis);		
-		int valor = numerosPossiveis.stream()
+		int valor = retornaNumerosPossiveis(matriz).stream()
 				.distinct().
 				filter(aObject -> !numerosEncontrados.contains(aObject)).
 				collect(Collectors.toList()).get(0);
@@ -1277,15 +1268,7 @@ public class SudokuUtil {
 				}
 		}
 
-        Integer[] arrayNumerosPossiveis = null;
-		if(matriz.length == 4) {
-			arrayNumerosPossiveis = new Integer[] { 1, 2, 3, 4 };
-		} else if(matriz.length == 9) {
-			arrayNumerosPossiveis = new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-		}
-
-		List<Integer> numerosPossiveis = Arrays.asList(arrayNumerosPossiveis);		
-		int valor = numerosPossiveis.stream()
+		int valor = retornaNumerosPossiveis(matriz).stream()
 				.distinct().
 				filter(aObject -> !numerosEncontrados.contains(aObject)).
 				collect(Collectors.toList()).get(0);
