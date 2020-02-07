@@ -57,7 +57,7 @@ public class Sudoku {
 			SudokuUtil.setValorNaLinhaColuna(posicao.getValor(), posicao.getX(), posicao.getY(), matriz, "RG01");
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param matriz
@@ -74,6 +74,11 @@ public class Sudoku {
 		}
 	}	
 
+	public void regra05(int[][] matriz) {
+		regra05Linha(matriz);
+		regra05Coluna(matriz);
+	}
+	
 	public void regra05Linha(int[][] matriz) {
 		int linha = -1;
 		for (int i = 0; i < matriz.length; i++) {
@@ -104,7 +109,9 @@ public class Sudoku {
 		int linhaAnalisada = -1;
 		int colunaVazia01 = -1;
 		int colunaVazia02 = -1;
-
+		List<Integer> numerosEncontrados = new ArrayList<>();
+		List<Integer> colunasVazias = new ArrayList<>();
+		
 		for (int i = 0; i < matriz.length; i++) {
 			if(SudokuUtil.existeLinha02PosicoesRestantes(i, matriz)) {
 				linhaAnalisada = i;
@@ -113,29 +120,55 @@ public class Sudoku {
 		}
 		if(linhaAnalisada != -1) {
 
+//			for (int j = 0; j < matriz.length; j++) {
+//				if(matriz[linhaAnalisada][j] == 0) {
+//					colunaVazia01 = j;
+//					continue;
+//				}
+//				if(j != colunaVazia01 && matriz[linhaAnalisada][j] == 0) {
+//					colunaVazia02 = j;
+//					break;
+//				}			
+//			}
+			numerosEncontrados.clear();
 			for (int j = 0; j < matriz.length; j++) {
-				if(matriz[linhaAnalisada][j] == 0) {
-					colunaVazia01 = j;
-					continue;
+				
+				if(matriz[linhaAnalisada][j] != 0) {
+					numerosEncontrados.add(matriz[linhaAnalisada][j]);
 				}
-				if(j != colunaVazia01 && matriz[linhaAnalisada][j] == 0) {
-					colunaVazia02 = j;
-					break;
-				}			
+				if(matriz[linhaAnalisada][j] == 0) {
+					//colunasVazias.add(matriz[linhaAnalisada][j]);
+					colunasVazias.add(j);
+				}
 			}
 			
-			int possib01 = SudokuUtil.qtdPossibilidadesCelula(linhaAnalisada, colunaVazia01, matriz).get(0);
-			int possib02 = SudokuUtil.qtdPossibilidadesCelula(linhaAnalisada, colunaVazia01, matriz).get(1);
+//			int possib01 = SudokuUtil.qtdPossibilidadesCelula(linhaAnalisada, colunaVazia01, matriz).get(0);
+//			int possib02 = SudokuUtil.qtdPossibilidadesCelula(linhaAnalisada, colunaVazia01, matriz).get(1);
+			//int possib01 = SudokuUtil.qtdPossibilidadesCelula(linhaAnalisada, colunaVazia01, matriz).get(0);
+			//int possib02 = SudokuUtil.qtdPossibilidadesCelula(linhaAnalisada, colunaVazia01, matriz).get(1);
 
-			if(SudokuUtil.existeNumeroNaColuna(possib01, colunaVazia01, matriz) == 1) {
+			colunaVazia01 = colunasVazias.get(0);
+			colunaVazia02 = colunasVazias.get(1);
+			
+			List<Integer> numerosRestantes = numerosPossiveis.stream()
+					.distinct().
+					filter(aObject -> !numerosEncontrados.contains(aObject)).
+					collect(Collectors.toList());
+			
+			if(numerosRestantes.size() == 2) {
+				int possib01 = numerosRestantes.get(0);
+				int possib02 = numerosRestantes.get(1);
 				
-				SudokuUtil.setValorNaLinhaColuna(possib01, linhaAnalisada, colunaVazia02, matriz, "RG06-Linha");
-				SudokuUtil.setValorNaLinhaColuna(possib02, linhaAnalisada, colunaVazia01, matriz, "RG06-Linha");
-				
-			} else if(SudokuUtil.existeNumeroNaColuna(possib02, colunaVazia01, matriz) == 1) {
-				
-				SudokuUtil.setValorNaLinhaColuna(possib02, linhaAnalisada, colunaVazia01, matriz, "RG06-Linha");
-				SudokuUtil.setValorNaLinhaColuna(possib01, linhaAnalisada, colunaVazia02, matriz, "RG06-Linha");
+				if(SudokuUtil.existeNumeroNaColuna(possib01, colunaVazia01, matriz) == 1) {
+					
+					SudokuUtil.setValorNaLinhaColuna(possib01, linhaAnalisada, colunaVazia02, matriz, "RG06-Linha");
+					SudokuUtil.setValorNaLinhaColuna(possib02, linhaAnalisada, colunaVazia01, matriz, "RG06-Linha");
+					
+				} else if(SudokuUtil.existeNumeroNaColuna(possib02, colunaVazia01, matriz) == 1) {
+					
+					SudokuUtil.setValorNaLinhaColuna(possib02, linhaAnalisada, colunaVazia01, matriz, "RG06-Linha");
+					SudokuUtil.setValorNaLinhaColuna(possib01, linhaAnalisada, colunaVazia02, matriz, "RG06-Linha");
+				}
 			}
 		}
 	}	
@@ -165,7 +198,8 @@ public class Sudoku {
 					numerosEncontrados.add(matriz[i][colunaAnalisada]);
 				}
 				if(matriz[i][colunaAnalisada] == 0) {
-					linhasVazias.add(matriz[i][colunaAnalisada]);
+					//linhasVazias.add(matriz[i][colunaAnalisada]);
+					linhasVazias.add(i);
 				}
 				
 			}
@@ -273,7 +307,9 @@ public class Sudoku {
 		
 		if(SudokuUtil.existeQuadrante01PosicaoRestante(matriz)) {
 			pos = SudokuUtil.retornaQuadrante01PosicaoRestante(matriz);
-			SudokuUtil.setValorNaLinhaColuna(pos.getValor(), pos.getX(), pos.getY(), matriz, "RG08");
+			if(null != pos) {
+				SudokuUtil.setValorNaLinhaColuna(pos.getValor(), pos.getX(), pos.getY(), matriz, "RG08");
+			}
 		}
 	}
 
@@ -284,7 +320,8 @@ public class Sudoku {
 		}
 	}
 	
-	public void analisaNumerosNaHorizontal(int[][] matriz) {
+	//public void analisaNumerosNaHorizontal(int[][] matriz) {
+	public void regra02(int[][] matriz) {
 		// Analisa os quadrantes 1,2,3
 		analisaCamadaHorizontal01DoisQuadrantesPreenchidos(matriz);
 		
@@ -358,7 +395,7 @@ public class Sudoku {
 		analisaCamadaHorizontal02QuadrantesPreenchidos(matriz, linhasPossiveis);
 	}
 	
-	public void analisaNumerosNaVertical(int[][] matriz) {
+	public void regra03(int[][] matriz) {
 
 		// Analisa os quadrantes 1,4,7
 		analisaCamadaVertical01DoisQuadrantesPreenchidos(matriz);
@@ -475,100 +512,40 @@ public class Sudoku {
 	
 	public void analisaSolucao(int[][] matriz) {
 
-		// Regra 01
-		regra01(matriz);
-		// Regra 04
-		regra04(matriz);
-		// Regra 05
-		regra05Linha(matriz);
-		regra05Coluna(matriz);
-		
-		// Regra 06
-		regra06Linha(matriz);
-		regra06Coluna(matriz);
-		// Regra 07
-		regra07(matriz);
-		// Regra 08
-		regra08(matriz);
-		// Regra 09
-		regra09(matriz);
-		
-		// analisa na horizontal
-	    analisaNumerosNaHorizontal(matriz);
+		do {
 
-		// Regra 01
-		regra01(matriz);
-		// Regra 04
-		regra04(matriz);
-		// Regra 05
-		regra05Linha(matriz);
-		regra05Coluna(matriz);
-		
-		// Regra 06
-		regra06Linha(matriz);
-		regra06Coluna(matriz);
-		
-		// Regra 07
-		regra07(matriz);
-		// Regra 08
-		regra08(matriz);
-		// Regra 09
-		regra09(matriz);
+			// Regra 01
+			regra01(matriz);
+			
+			// Regra 02
+			regra02(matriz);
 
-		// analisa na vertical
-		analisaNumerosNaVertical(matriz);
-		
-		// Regra 01
-		regra01(matriz);
-		// Regra 04
-		regra04(matriz);
-		
-		// Regra 05
-		regra05Linha(matriz);
-		regra05Coluna(matriz);
-		
-		// Regra 06
-		regra06Linha(matriz);
-		regra06Coluna(matriz);
-		
-		// Regra 07
-		regra07(matriz);
-		// Regra 08
-		regra08(matriz);
-		// Regra 09
-		regra09(matriz);
+			// Regra 03
+			regra03(matriz);
 
-		// Regra 05
-		regra05Linha(matriz);
-		regra05Coluna(matriz);
-		
-		// analisa na horizontal
-	    analisaNumerosNaHorizontal(matriz);
-	    
-	    // Regra 05
-		regra05Linha(matriz);
-		regra05Coluna(matriz);
+			// Regra 04
+			regra04(matriz);
+			
+			// Regra 05
+			regra05(matriz);
+			
+//			regra05Linha(matriz);
+//			regra05Coluna(matriz);
+			
+			// Regra 06
+			regra06Linha(matriz);
+			regra06Coluna(matriz);
+			
+			// Regra 07
+			regra07(matriz);
+			
+			// Regra 08
+			regra08(matriz);
+			
+			// Regra 09
+			regra09(matriz);
 
-		// Regra 08
-		regra08(matriz);
-		
-		// Regra 09
-		regra09(matriz);
-		regra09(matriz);
-		regra09(matriz);
-		regra09(matriz);
-		
-		// Regra 05
-		regra05Linha(matriz);
-		regra05Coluna(matriz);
-
-		// Regra 08
-		regra08(matriz);
-
-		// analisa na horizontal
-	    analisaNumerosNaHorizontal(matriz);
-		// analisa na vertical
-		analisaNumerosNaVertical(matriz);
+		} while (SudokuUtil.existeCelulaVazia(matriz));
 
 		System.out.println("\n\n TERMINOU ANALISE. Qtd infericoes = "+(++SudokuUtil.infericoes));
 	}
@@ -706,9 +683,9 @@ public class Sudoku {
 			SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaFalta, colunaFalta, matriz, "RG02-Análise Horizontal");
 			
 			// verifica celula 01 possibilidade e seta
-			verificaCelula01PossibilidadeESetaValor(matriz);
+			//verificaCelula01PossibilidadeESetaValor(matriz);
 			
-			analisaNumerosNaVertical(matriz);
+			//analisaNumerosNaVertical(matriz);
 		}
 	}
 
@@ -781,10 +758,10 @@ public class Sudoku {
 			SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaFalta, colunaFalta, matriz, "RG03-Análise Vertical");
 
 			// verifica celula 01 possibilidade e seta
-			verificaCelula01PossibilidadeESetaValor(matriz);
+			//verificaCelula01PossibilidadeESetaValor(matriz);
 			
 			// 
-			analisaNumerosNaHorizontal(matriz);
+			//analisaNumerosNaHorizontal(matriz);
 		}
 	}
 	
@@ -804,9 +781,9 @@ public class Sudoku {
 		SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaFalta, colunaFalta, matriz, "RG02-Análise Horizontal");
 
 		// verifica celula 01 possibilidade e seta
-		verificaCelula01PossibilidadeESetaValor(matriz);
+		//verificaCelula01PossibilidadeESetaValor(matriz);
 		
-		analisaNumerosNaVertical(matriz);	
+		//analisaNumerosNaVertical(matriz);	
 	}
 
 	private void analisaCamadaVertical02CelulasPrenchidas(
@@ -817,7 +794,7 @@ public class Sudoku {
 		int linhaFalta = SudokuUtil.retornaLinhaVaziaNaColunaNoQuadrante(colunaFalta, colunasQuadrante, matriz);
 		SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaFalta, colunaFalta, matriz, "RG03-Análise Vertical");
 
-		analisaNumerosNaHorizontal(matriz);
+		//analisaNumerosNaHorizontal(matriz);
 	}
 	
 	private int retornaQuadrantesVazios(int linhaQuadrante01, int linhaQuadrante02, int linhaQuadrante03) {

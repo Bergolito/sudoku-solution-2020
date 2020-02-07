@@ -1215,7 +1215,13 @@ public class SudokuUtil {
 			
 		}
 		
-		return new Posicao(linhaSetar, colunaSetar, numeroSetar);
+		if(linhaSetar != -1 && colunaSetar != -1 && numeroSetar != -1) {
+			return new Posicao(linhaSetar, colunaSetar, numeroSetar);	
+		} else {
+			return null;
+		}
+			
+		
 	}
 
 	public static void resolveQuadrante02PosicoesRestantes(int[][] matriz) {
@@ -1445,26 +1451,29 @@ public class SudokuUtil {
 			}	
 
 			//
-			linhaNumeroAnalisado01 = posicoesVazias.get(0).getX();
-			colunaNumeroAnalisado01 = posicoesVazias.get(0).getY();
-			//
-			linhaNumeroAnalisado02 = posicoesVazias.get(1).getX();
-			colunaNumeroAnalisado02 = posicoesVazias.get(1).getY();
-
-			if(SudokuUtil.existeNumeroNaLinha(numeroAnalisado01, linhaNumeroAnalisado01, matriz) == 1) {
-				SudokuUtil.setValorNaLinhaColuna(numeroAnalisado01, linhaNumeroAnalisado02, colunaNumeroAnalisado02, matriz, "RG09");
-				SudokuUtil.setValorNaLinhaColuna(numeroAnalisado02, linhaNumeroAnalisado01, colunaNumeroAnalisado01, matriz, "RG09");
-			} else if(SudokuUtil.existeNumeroNaLinha(numeroAnalisado01, linhaNumeroAnalisado02, matriz) == 1) {
-				SudokuUtil.setValorNaLinhaColuna(numeroAnalisado01, linhaNumeroAnalisado01, colunaNumeroAnalisado01, matriz, "RG09");
-				SudokuUtil.setValorNaLinhaColuna(numeroAnalisado02, linhaNumeroAnalisado02, colunaNumeroAnalisado02, matriz, "RG09");
-			}
-			
-			if(SudokuUtil.existeNumeroNaLinha(numeroAnalisado02, linhaNumeroAnalisado01, matriz) == 1) {
-				SudokuUtil.setValorNaLinhaColuna(numeroAnalisado02, linhaNumeroAnalisado02, colunaNumeroAnalisado02, matriz, "RG09");
-				SudokuUtil.setValorNaLinhaColuna(numeroAnalisado01, linhaNumeroAnalisado01, colunaNumeroAnalisado01, matriz, "RG09");
-			} else if(SudokuUtil.existeNumeroNaLinha(numeroAnalisado02, linhaNumeroAnalisado02, matriz) == 1) {
-				SudokuUtil.setValorNaLinhaColuna(numeroAnalisado01, linhaNumeroAnalisado01, colunaNumeroAnalisado01, matriz, "RG09");
-				SudokuUtil.setValorNaLinhaColuna(numeroAnalisado02, linhaNumeroAnalisado02, colunaNumeroAnalisado02, matriz, "RG09");
+			if(!posicoesVazias.isEmpty() && posicoesVazias.size() == 2) {
+				
+				linhaNumeroAnalisado01 = posicoesVazias.get(0).getX();
+				colunaNumeroAnalisado01 = posicoesVazias.get(0).getY();
+				//
+				linhaNumeroAnalisado02 = posicoesVazias.get(1).getX();
+				colunaNumeroAnalisado02 = posicoesVazias.get(1).getY();
+	
+				if(SudokuUtil.existeNumeroNaLinha(numeroAnalisado01, linhaNumeroAnalisado01, matriz) == 1) {
+					SudokuUtil.setValorNaLinhaColuna(numeroAnalisado01, linhaNumeroAnalisado02, colunaNumeroAnalisado02, matriz, "RG09");
+					SudokuUtil.setValorNaLinhaColuna(numeroAnalisado02, linhaNumeroAnalisado01, colunaNumeroAnalisado01, matriz, "RG09");
+				} else if(SudokuUtil.existeNumeroNaLinha(numeroAnalisado01, linhaNumeroAnalisado02, matriz) == 1) {
+					SudokuUtil.setValorNaLinhaColuna(numeroAnalisado01, linhaNumeroAnalisado01, colunaNumeroAnalisado01, matriz, "RG09");
+					SudokuUtil.setValorNaLinhaColuna(numeroAnalisado02, linhaNumeroAnalisado02, colunaNumeroAnalisado02, matriz, "RG09");
+				}
+				
+				if(SudokuUtil.existeNumeroNaLinha(numeroAnalisado02, linhaNumeroAnalisado01, matriz) == 1) {
+					SudokuUtil.setValorNaLinhaColuna(numeroAnalisado02, linhaNumeroAnalisado02, colunaNumeroAnalisado02, matriz, "RG09");
+					SudokuUtil.setValorNaLinhaColuna(numeroAnalisado01, linhaNumeroAnalisado01, colunaNumeroAnalisado01, matriz, "RG09");
+				} else if(SudokuUtil.existeNumeroNaLinha(numeroAnalisado02, linhaNumeroAnalisado02, matriz) == 1) {
+					SudokuUtil.setValorNaLinhaColuna(numeroAnalisado01, linhaNumeroAnalisado02, colunaNumeroAnalisado02, matriz, "RG09");
+					SudokuUtil.setValorNaLinhaColuna(numeroAnalisado02, linhaNumeroAnalisado01, colunaNumeroAnalisado01, matriz, "RG09");
+				}
 			}
 		}
 	}
