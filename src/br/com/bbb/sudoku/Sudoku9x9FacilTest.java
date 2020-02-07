@@ -37,8 +37,7 @@ public class Sudoku9x9FacilTest {
 		int[][] matrizVerificacao = getMatrizPreenchida(linhas, colunas);
 		long inicio = System.currentTimeMillis();
 		
-		Sudoku sudoku = new Sudoku(linhas, colunas, matriz, null);
-		//Sudoku sudoku = new Sudoku(linhas, colunas, matriz, LOG_LEVEL_DEBUG);
+		Sudoku sudoku = new Sudoku(linhas, colunas, matriz, LOG_LEVEL_DEBUG);
 		System.out.println("Matriz inicial:");
 		SudokuUtil.imprimeMatriz(matriz);
 		System.out.println("Qtd celulas vazias = "+SudokuUtil.qtdCelulasVazias(matriz));

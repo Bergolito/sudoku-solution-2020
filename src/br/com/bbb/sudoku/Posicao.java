@@ -1,6 +1,5 @@
 package br.com.bbb.sudoku;
 
-
 public class Posicao {
 
 	// atributos
@@ -10,11 +9,10 @@ public class Posicao {
 
 	// construtores
 	public Posicao() {
-		super();
+		//
 	}
 
 	public Posicao(int x, int y, int v) {
-		super();
 		this.x = x;
 		this.y = y;
 		this.valor = v;
