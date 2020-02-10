@@ -46,10 +46,10 @@ public class SudokuUtil {
 				}
 			}
 		}
-		return ++contador;
+		return contador;
 	}
 	
-	public static List<Integer> retornaColunasQuadrante(int quadrante, int[][] matriz) {
+	public static List<Integer> retornaColunasQuadrante(int quadrante) {
 		List<Integer> colunas = new ArrayList<>();
 		
 		if(quadrante == 1 || quadrante == 4 || quadrante == 7) {
@@ -65,7 +65,7 @@ public class SudokuUtil {
 		return colunas;
 	}	
 
-	public static List<Integer> retornaLinhasQuadrante(int quadrante, int[][] matriz) {
+	public static List<Integer> retornaLinhasQuadrante(int quadrante) {
 		List<Integer> linhas = new ArrayList<>();
 		
 		if(quadrante == 1 || quadrante == 2 || quadrante == 3) {// linhas 0, 1, 2

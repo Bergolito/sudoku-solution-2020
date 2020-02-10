@@ -848,7 +848,7 @@ public class Sudoku {
 							// O numero analisado deve estar na linhaQuadrante02
 							// verifica a qtd celulas preenchidas na linha no quadrante
 							
-							colunasQuadrante = SudokuUtil.retornaColunasQuadrante(quadranteNaoPreenchido02, matriz);
+							colunasQuadrante = SudokuUtil.retornaColunasQuadrante(quadranteNaoPreenchido02);
 
 							int qtdNumPreenchidosLinha = 
 								qtdNumPreenchidosNaLinhaNoQuadrante(linhaQuadrante02, quadranteNaoPreenchido02, matriz);
@@ -874,7 +874,7 @@ public class Sudoku {
 							// se for == 1 analisa
 							else if(qtdNumPreenchidosLinha == 1) {
 
-								colunasQuadrante = SudokuUtil.retornaColunasQuadrante(quadranteNaoPreenchido02, matriz);
+								colunasQuadrante = SudokuUtil.retornaColunasQuadrante(quadranteNaoPreenchido02);
 								
 								if(matriz[linhaQuadrante02][colunasQuadrante.get(0)] == 0 && matriz[linhaQuadrante02][colunasQuadrante.get(1)] == 0) {
 									colunaVazia01 = colunasQuadrante.get(0);	
@@ -983,7 +983,7 @@ public class Sudoku {
 								
 								// O numero analisado deve estar na linhaQuadrante02
 								// verifica a qtd celulas preenchidas na linha no quadrante
-								linhasQuadrante = SudokuUtil.retornaLinhasQuadrante(quadranteNaoPreenchido02, matriz);
+								linhasQuadrante = SudokuUtil.retornaLinhasQuadrante(quadranteNaoPreenchido02);
 								
 								int qtdNumPreenchidosColuna = 
 									qtdNumPreenchidosNaColunaNoQuadrante(colunaQuadrante02, quadranteNaoPreenchido02, matriz);
@@ -1010,7 +1010,7 @@ public class Sudoku {
 								// se for == 1 analisa
 								else if(qtdNumPreenchidosColuna == 1) {
 
-									linhasQuadrante = SudokuUtil.retornaLinhasQuadrante(quadranteNaoPreenchido02, matriz);
+									linhasQuadrante = SudokuUtil.retornaLinhasQuadrante(quadranteNaoPreenchido02);
 									
 									if(matriz[linhasQuadrante.get(0)][colunaQuadrante02] == 0 && 
 										matriz[linhasQuadrante.get(1)][colunaQuadrante02] == 0) {
@@ -1070,7 +1070,7 @@ public class Sudoku {
 				qtdNumPreenchidosNaLinhaNoQuadrante(linhasRestantesParaAnalise.get(1), quadranteNaoPreenchido01, matriz);
 		
 		int colunaVazia = -1;
-		List<Integer> colunasQuadrante = SudokuUtil.retornaColunasQuadrante(quadranteNaoPreenchido01, matriz);
+		List<Integer> colunasQuadrante = SudokuUtil.retornaColunasQuadrante(quadranteNaoPreenchido01);
 		
 		if(numerosPreenchidosLinha01 == 2) {
 			if(matriz[linhasRestantesParaAnalise.get(0)][colunasQuadrante.get(0)] == 0) {
