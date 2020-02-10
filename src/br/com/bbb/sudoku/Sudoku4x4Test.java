@@ -49,22 +49,22 @@ public class Sudoku4x4Test {
 	public static int[][] getMatrizPreenchida(int linhas, int colunas) {
 		int[][] matrizVerificacao = new int [linhas][colunas];
 
-		//
+		//0 [ 1 _ _ 4 ]
 		matrizVerificacao[0][0] = 1;
 		matrizVerificacao[0][1] = 3;
 		matrizVerificacao[0][2] = 2;
 		matrizVerificacao[0][3] = 4;
-		//
+		//1 [ _ 2 _ _ ]
 		matrizVerificacao[1][0] = 4;
 		matrizVerificacao[1][1] = 2;
 		matrizVerificacao[1][2] = 3;
 		matrizVerificacao[1][3] = 1;		
-		//
+		//2 [ _ _ 4 _ ]
 		matrizVerificacao[2][0] = 2;
 		matrizVerificacao[2][1] = 1;
 		matrizVerificacao[2][2] = 4;
 		matrizVerificacao[2][3] = 3;
-		//
+		//3 [ 3 _ _ _ ]
 		matrizVerificacao[3][0] = 3;
 		matrizVerificacao[3][1] = 4;
 		matrizVerificacao[3][2] = 1; 

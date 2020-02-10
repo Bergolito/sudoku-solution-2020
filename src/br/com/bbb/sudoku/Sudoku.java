@@ -10,14 +10,12 @@ public class Sudoku {
 	// constantes
 	private static final String DEBUG_MODE = "DEBUG";
 	private static final String PRODUCAO_MODE = "PROD";
-	private static final Integer[] arrayNumerosPossiveis = new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-	
+	private static final Integer[] NUMEROS_POSSIVEIS = new Integer[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 	private static final String REGRA01 = "RG01";
 	private static final String REGRA02 = "RG02-Análise Horizontal";
 	private static final String REGRA03 = "RG03-Análise Vertical";
 	private static final String REGRA04 = "RG04";
 	private static final String REGRA05 = "RG05";
-	
 	private static final String REGRA06_LINHA = "RG06-Linha";
 	private static final String REGRA06_COLUNA = "RG06-Coluna";
 	
@@ -39,7 +37,7 @@ public class Sudoku {
 
 	public Sudoku(int lin, int col, int[][] mat) {
 		mat = new int[lin][col];
-		numerosPossiveis = Arrays.asList(arrayNumerosPossiveis);
+		numerosPossiveis = Arrays.asList(NUMEROS_POSSIVEIS);
 	}
 
 	public Sudoku(int lin, int col, int[][] mat, String logLevel) {
@@ -50,7 +48,7 @@ public class Sudoku {
 		}else {
 			this.nivelLog = PRODUCAO_MODE; 
 		}
-		numerosPossiveis = Arrays.asList(arrayNumerosPossiveis);
+		numerosPossiveis = Arrays.asList(NUMEROS_POSSIVEIS);
 	}
 	
 	/**
