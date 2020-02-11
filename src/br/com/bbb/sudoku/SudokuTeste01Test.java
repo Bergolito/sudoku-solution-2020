@@ -1,5 +1,7 @@
 package br.com.bbb.sudoku;
 
+import org.junit.Test;
+
 import junit.framework.TestCase;
 
 public class SudokuTeste01Test extends TestCase {
@@ -9,6 +11,7 @@ public class SudokuTeste01Test extends TestCase {
 	}
 
 	// test method to add two values
+	@Test
 	public void testSudoku9X9Valido() {
 		int linhas = 9;
 		int colunas = 9;
