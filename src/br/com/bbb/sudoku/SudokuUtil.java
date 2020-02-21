@@ -733,7 +733,7 @@ public class SudokuUtil {
 	
 	public static boolean existeQuadranteQtdPosicoesRestantes(int qtdPosicoes, int[][] matriz) {
 		boolean achouQuadranteQtdPosicoesRestantes = false;
-		int[] restantes = retornaElementosReestantesQuadrante(matriz);
+		int[] restantes = retornaElementosRestantesQuadrante(matriz);
 		if(restantes[0] == qtdPosicoes || restantes[1] == qtdPosicoes || restantes[2] == qtdPosicoes ||
 		   restantes[3] == qtdPosicoes || restantes[4] == qtdPosicoes || restantes[5] == qtdPosicoes ||
 		   restantes[6] == qtdPosicoes || restantes[7] == qtdPosicoes || restantes[8] == qtdPosicoes) {
@@ -757,7 +757,7 @@ public class SudokuUtil {
 		}
 	}
 	
-	public static int[] retornaElementosReestantesQuadrante(int[][] matriz) {
+	public static int[] retornaElementosRestantesQuadrante(int[][] matriz) {
 		int[] retornos = new int[9];
 		// quadrantes 1,2,3 
 		List<Integer> elementosQuad1 = retornaElementosQuadrante(1, matriz);
@@ -840,7 +840,7 @@ public class SudokuUtil {
 		int colunaInicio = 0;
 		int colunaFim = 0;
 		int[] coordenadas = null;
-		int[] restantes = retornaElementosReestantesQuadrante(matriz);
+		int[] restantes = retornaElementosRestantesQuadrante(matriz);
 		
 		if(restantes[0] == 1 || restantes[1] == 1 || restantes[2] == 1 ||
 				restantes[3] == 1 || restantes[4] == 1 || restantes[5] == 1 ||
@@ -984,7 +984,7 @@ public class SudokuUtil {
 		int colunaInicio = 0;
 		int colunaFim = 0;
 		int[] coordenadas = null;
-		int[] restantes = retornaElementosReestantesQuadrante(matriz);
+		int[] restantes = retornaElementosRestantesQuadrante(matriz);
 		
 		if(restantes[0] == 2 || restantes[1] == 2 || restantes[2] == 2 ||
 		   restantes[3] == 2 || restantes[4] == 2 || restantes[5] == 2 ||
