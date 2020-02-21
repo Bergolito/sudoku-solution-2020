@@ -1,10 +1,9 @@
 package br.com.bbb.sudoku;
 
 
-public class Sudoku9x9Facil02Test {
+public class Sudoku9x9FacilN06Test {
 
 	/**
-		
 		Matriz de Entrada:
 	  	  =========================
 		0 [ 6 1 8 | _ _ _ | 4 _ _ ]
@@ -21,6 +20,7 @@ public class Sudoku9x9Facil02Test {
 		  =========================
 
 		Matriz Resolvida:
+		  =========================
 		0 [ 6 1 8 | 7 2 5 | 4 3 9 ]		
 		1 [ 7 5 4 | 3 9 6 | 2 8 1 ]
 		2 [ 3 9 2 | 8 1 4 | 6 5 7 ]
@@ -32,7 +32,7 @@ public class Sudoku9x9Facil02Test {
 		6 [ 5 3 1 | 9 6 8 | 7 2 4 ]
 		7 [ 2 7 9 | 4 5 3 | 8 1 6 ]
 		8 [ 8 4 6 | 2 7 1 | 3 9 5 ]
-    		  =========================
+    	  =========================
 	 */
 	public static void main(String[] args) {
 		int linhas = 9;
