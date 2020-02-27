@@ -742,6 +742,28 @@ public class SudokuUtil {
 		}
 		return achouQuadranteQtdPosicoesRestantes;
 	}
+
+	public static boolean existeColunaQtdPosicoesRestantes(int qtdPosicoes, int[][] matriz) {
+		boolean achouColunaQtdPosicoesRestantes = false;
+
+		int contador = 0;
+		for (int j = 0; j < matriz.length; j++) {
+			for (int i = 0; i < matriz.length; i++) {
+				if(matriz[i][j] == 0) {
+					contador++;
+				}
+			}
+			if(contador == qtdPosicoes) {
+				achouColunaQtdPosicoesRestantes = true;
+				break;
+			}
+		}
+		return achouColunaQtdPosicoesRestantes;
+	}
+	
+	public static boolean existeColuna03PosicoesRestantes(int[][] matriz) {
+		return existeColunaQtdPosicoesRestantes(3, matriz);
+	}
 	
 	public static boolean existeQuadrante01PosicaoRestante(int[][] matriz) {
 		return existeQuadranteQtdPosicoesRestantes(1, matriz);
@@ -954,6 +976,10 @@ public class SudokuUtil {
 		return Arrays.asList(arrayNumerosPossiveis);
 	}
 
+	public static void resolveColuna03PosicoesRestantes(int[][] matriz) {
+		
+	}
+	
 	// TODO Reduzir de 32 para 15
 	public static void resolveQuadrante02PosicoesRestantes(int[][] matriz) {
 		// quadrantes 1,2,3 
