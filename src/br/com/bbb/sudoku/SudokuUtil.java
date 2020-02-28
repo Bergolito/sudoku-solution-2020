@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class SudokuUtil {
 
-	public static int infericoes = 0;
+	public static int inferencias = 0;
 	
 	private SudokuUtil() {
 		//
@@ -561,7 +561,7 @@ public class SudokuUtil {
 		if(matriz[linha][coluna] == 0) {
 			System.out.println("|>>>>>>>>>>  Setando valor => ("+linha+","+coluna+")="+valor+" Regra="+regraId+" ]");
 			matriz[linha][coluna] = valor;	
-			infericoes++;
+			inferencias++;
 			imprimeMatriz(matriz);
 		} else {
 			System.out.print("\nSudoku: Não é possível setar numero em celula preenchida.  ");
@@ -743,26 +743,26 @@ public class SudokuUtil {
 		return achouQuadranteQtdPosicoesRestantes;
 	}
 
-	public static boolean existeColunaQtdPosicoesRestantes(int qtdPosicoes, int[][] matriz) {
-		boolean achouColunaQtdPosicoesRestantes = false;
-
+	public static List<Integer> retornaColunasQtdPosicoesRestantes(int qtdPosicoes, int[][] matriz) {
+		List<Integer> listaColunas = new ArrayList<>();
 		int contador = 0;
 		for (int j = 0; j < matriz.length; j++) {
+			listaColunas.clear();
+			contador = 0;
 			for (int i = 0; i < matriz.length; i++) {
 				if(matriz[i][j] == 0) {
 					contador++;
 				}
 			}
 			if(contador == qtdPosicoes) {
-				achouColunaQtdPosicoesRestantes = true;
-				break;
+				listaColunas.add(j);
 			}
 		}
-		return achouColunaQtdPosicoesRestantes;
+		return listaColunas;
 	}
 	
-	public static boolean existeColuna03PosicoesRestantes(int[][] matriz) {
-		return existeColunaQtdPosicoesRestantes(3, matriz);
+	public static List<Integer> retornaColunas03PosicoesRestantes(int[][] matriz) {
+		return retornaColunasQtdPosicoesRestantes(3, matriz);
 	}
 	
 	public static boolean existeQuadrante01PosicaoRestante(int[][] matriz) {
@@ -976,8 +976,92 @@ public class SudokuUtil {
 		return Arrays.asList(arrayNumerosPossiveis);
 	}
 
-	public static void resolveColuna03PosicoesRestantes(int[][] matriz) {
+	// TODO
+	public static void resolveColuna03PosicoesRestantes(int[][] matriz, int coluna) {
+		List<Integer> numerosPossiveis = SudokuUtil.retornaNumerosPossiveis(matriz);
+		List<Integer> numerosEncontradosColuna = new ArrayList<>();
+		List<Integer> linhasEmBranco = new ArrayList<>();
+		for (int i = 0; i < matriz.length; i++) {
+			if(matriz[i][coluna] != 0) {
+				numerosEncontradosColuna.add(matriz[i][coluna]);
+			}
+			if(matriz[i][coluna] == 0) {
+				linhasEmBranco.add(i);
+			}
+		}
+		List<Integer> numerosRestantesColuna = numerosPossiveis.stream()
+				.distinct().
+				filter(aObject -> !numerosEncontradosColuna.contains(aObject)).
+				collect(Collectors.toList());
 		
+		int existeNumLinhaRestante01 = -1;
+		int existeNumLinhaRestante02 = -1;
+		int existeNumLinhaRestante03 = -1;
+		int linhaSetar = -1;
+		for (Integer numero : numerosRestantesColuna) {
+			existeNumLinhaRestante01 = SudokuUtil.existeNumeroNaLinha(numero, linhasEmBranco.get(0), matriz);
+			existeNumLinhaRestante02 = SudokuUtil.existeNumeroNaLinha(numero, linhasEmBranco.get(1), matriz);
+			existeNumLinhaRestante03 = SudokuUtil.existeNumeroNaLinha(numero, linhasEmBranco.get(2), matriz);
+			
+			if ((existeNumLinhaRestante01+existeNumLinhaRestante02+existeNumLinhaRestante03 == 2)) {
+				// Achou a condição em que o numero só tem uma linha restante possível
+				
+				if(SudokuUtil.existeNumeroNaLinha(numero, linhasEmBranco.get(0), matriz) == 0) {
+					linhaSetar = linhasEmBranco.get(0);
+					
+				} else if(SudokuUtil.existeNumeroNaLinha(numero, linhasEmBranco.get(1), matriz) == 0) {
+					linhaSetar = linhasEmBranco.get(1);
+					
+				} else if(SudokuUtil.existeNumeroNaLinha(numero, linhasEmBranco.get(2), matriz) == 0) {
+					linhaSetar = linhasEmBranco.get(2);
+				}
+				// Achou onde estava faltando
+				SudokuUtil.setValorNaLinhaColuna(numero, linhaSetar, coluna, matriz, "REGRA12_03_Posicoes");
+			}
+		}
+
+	}
+
+	public static void resolveColuna02PosicoesRestantes(int[][] matriz, int coluna) {
+		List<Integer> numerosPossiveis = SudokuUtil.retornaNumerosPossiveis(matriz);
+		List<Integer> numerosEncontradosColuna = new ArrayList<>();
+		List<Integer> linhasEmBranco = new ArrayList<>();
+		for (int i = 0; i < matriz.length; i++) {
+			if(matriz[i][coluna] != 0) {
+				numerosEncontradosColuna.add(matriz[i][coluna]);
+			}
+			if(matriz[i][coluna] == 0) {
+				linhasEmBranco.add(i);
+			}
+		}
+		List<Integer> numerosRestantesColuna = numerosPossiveis.stream()
+				.distinct().
+				filter(aObject -> !numerosEncontradosColuna.contains(aObject)).
+				collect(Collectors.toList());
+		
+		int existeNumLinhaRestante01 = -1;
+		int existeNumLinhaRestante02 = -1;
+		int linhaSetar = -1;
+		for (Integer numero : numerosRestantesColuna) {
+			existeNumLinhaRestante01 = SudokuUtil.existeNumeroNaLinha(numero, linhasEmBranco.get(0), matriz);
+			existeNumLinhaRestante02 = SudokuUtil.existeNumeroNaLinha(numero, linhasEmBranco.get(1), matriz);
+			
+			if ((existeNumLinhaRestante01+existeNumLinhaRestante02 == 1)) {
+				// Achou a condição em que o numero só tem uma linha restante possível
+				
+				if(SudokuUtil.existeNumeroNaLinha(numero, linhasEmBranco.get(0), matriz) == 0) {
+					linhaSetar = linhasEmBranco.get(0);
+					
+				} else if(SudokuUtil.existeNumeroNaLinha(numero, linhasEmBranco.get(1), matriz) == 0) {
+					linhaSetar = linhasEmBranco.get(1);
+					
+				} 
+
+				// Achou onde estava faltando
+				SudokuUtil.setValorNaLinhaColuna(numero, linhaSetar, coluna, matriz, "REGRA12_02_Posicoes");
+			}
+		}
+
 	}
 	
 	// TODO Reduzir de 32 para 15
