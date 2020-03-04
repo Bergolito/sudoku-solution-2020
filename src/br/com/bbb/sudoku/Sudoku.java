@@ -2,7 +2,9 @@ package br.com.bbb.sudoku;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Sudoku {
@@ -89,6 +91,12 @@ public class Sudoku {
 				
 				// Regra 12
 				regra12(matriz);
+
+				// Regra 13
+				regra13(matriz);
+				
+				// Regra 14
+				regra14(matriz);
 				
 				ciclo++;
 			}
@@ -106,6 +114,9 @@ public class Sudoku {
 	 * @return
 	 */
 	public void regra01(int[][] matriz) {
+		//
+		SudokuUtil.imprimeMatrizPossibilidades9X9(matriz);
+		//
 		if(SudokuUtil.existeCelula01Possib(matriz)) {
 			Posicao posicao = SudokuUtil.retornaCelula01Possib(matriz);
 			SudokuUtil.setValorNaLinhaColuna(posicao.getValor(), posicao.getX(), posicao.getY(), matriz, REGRA01);
@@ -414,6 +425,717 @@ public class Sudoku {
 		
 	}
 	
+	public void regra13(int[][] matriz) {
+
+		List<Integer> colunasPossiveis = new ArrayList<>();
+		colunasPossiveis.add(0);
+		colunasPossiveis.add(1);
+		colunasPossiveis.add(2);
+		regra13Quadrantes147(matriz, colunasPossiveis);
+
+		colunasPossiveis.clear();
+		colunasPossiveis.add(3);
+		colunasPossiveis.add(4);
+		colunasPossiveis.add(5);
+		regra13Quadrantes258(matriz, colunasPossiveis);
+
+		colunasPossiveis.clear();
+		colunasPossiveis.add(6);
+		colunasPossiveis.add(7);
+		colunasPossiveis.add(8);
+		regra13Quadrantes369(matriz, colunasPossiveis);
+	}
+
+	public void regra14(int[][] matriz) {
+
+		List<Integer> colunasPossiveis = new ArrayList<>();
+		colunasPossiveis.add(0);
+		colunasPossiveis.add(1);
+		colunasPossiveis.add(2);
+		regra14Quadrantes417(matriz, colunasPossiveis);
+		
+		
+		List<Integer> linhasPossiveis = new ArrayList<>();
+		linhasPossiveis.add(0);
+		linhasPossiveis.add(1);
+		linhasPossiveis.add(2);
+		regra14Quadrantes321(matriz, linhasPossiveis);
+	}
+	
+	// TODO Reduzir de 65 para 15
+	public void regra13Quadrantes147(int[][] matriz, List<Integer> colunasPossiveis) {
+		// Quadrantes 1, 4 e 7 
+		List<Integer> listaElemQuad01 = SudokuUtil.retornaElementosQuadrante(1, matriz);
+		
+		int numeroAnalisado = -1;
+		int linhaNumeroAnalisado = -1;
+		int colunaNumeroAnalisado = -1;
+		int existeNumeroQuadrante04 = 0;
+		int existeNumeroQuadrante07 = 0;
+		int existeNumeroLinha03 = 0;
+		int existeNumeroLinha04 = 0;
+		int existeNumeroLinha05 = 0;
+		int existeNumeroLinha06 = 0;
+		int existeNumeroLinha07 = 0;
+		int existeNumeroLinha08 = 0;
+		
+		List<Integer> linhasRestantes = null;
+		List<Integer> colunasRestantes = null;
+		List<Integer> linhasPossiveis = new ArrayList<>();
+				
+		for (int i = 0; i < listaElemQuad01.size(); i++) {
+			numeroAnalisado = listaElemQuad01.get(i);
+			existeNumeroQuadrante04 = SudokuUtil.existeNumeroQuadrante(numeroAnalisado, 4, matriz);
+			if(existeNumeroQuadrante04 == 0) {
+				
+				System.out.println("Analisando numero "+numeroAnalisado+" no quandrante "+4);
+				existeNumeroLinha03 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 3, matriz);
+				existeNumeroLinha04 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 4, matriz);
+				existeNumeroLinha05 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 5, matriz);
+				
+				linhasPossiveis.clear();
+				linhasPossiveis.add(3);
+				linhasPossiveis.add(4);
+				linhasPossiveis.add(5);
+				
+				int contador = 0;
+				int linhaSetar = -1;
+				int colunaSetar = -1;
+				
+				if((existeNumeroLinha03+existeNumeroLinha04+existeNumeroLinha05 == 1)) {  
+					
+					colunaNumeroAnalisado = SudokuUtil.qualColunaNumeroEstaNoQuadrante(numeroAnalisado, 1, matriz);
+					if(existeNumeroLinha03 == 1) {
+						linhaNumeroAnalisado = 3;
+					}
+					else if(existeNumeroLinha04 == 1) {
+						linhaNumeroAnalisado = 4;
+					}
+					else if(existeNumeroLinha05 == 1) {
+						linhaNumeroAnalisado = 5;
+					}
+
+					linhasRestantes = retornaLinhasRestantes(linhaNumeroAnalisado, linhasPossiveis);
+					colunasRestantes = retornaColunasRestantes(colunaNumeroAnalisado, colunasPossiveis);
+					
+					contador = 0;
+					for (int j = 0; j < linhasRestantes.size(); j++) {
+						for (int jj = 0; jj < colunasRestantes.size(); jj++) {
+							if(matriz[linhasRestantes.get(j)][colunasRestantes.get(jj)] == 0) {
+								contador++;
+								linhaSetar = linhasRestantes.get(j);
+								colunaSetar = colunasRestantes.get(jj);
+							}
+						}
+					}
+					if(contador == 1) {
+						SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaSetar, colunaSetar, matriz, "REGRA_13");
+					}
+				}
+			}
+			existeNumeroQuadrante07 = SudokuUtil.existeNumeroQuadrante(numeroAnalisado, 7, matriz);
+			if(existeNumeroQuadrante07 == 0) {
+				System.out.println("Analisando numero "+numeroAnalisado+" no quandrante "+7);
+				existeNumeroLinha06 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 6, matriz);
+				existeNumeroLinha07 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 7, matriz);
+				existeNumeroLinha08 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 8, matriz);
+				
+				linhasPossiveis.clear();
+				linhasPossiveis.add(6);
+				linhasPossiveis.add(7);
+				linhasPossiveis.add(8);
+				
+				int contador = 0;
+				int linhaSetar = -1;
+				int colunaSetar = -1;
+
+				if((existeNumeroLinha06+existeNumeroLinha07+existeNumeroLinha08 == 1)) {
+					
+					colunaNumeroAnalisado = SudokuUtil.qualColunaNumeroEstaNoQuadrante(numeroAnalisado, 1, matriz);
+					if(existeNumeroLinha06 == 1) {
+						linhaNumeroAnalisado = 6;
+					}
+					else if(existeNumeroLinha07 == 1) {
+						linhaNumeroAnalisado = 7;
+					}
+					else if(existeNumeroLinha08 == 1) {
+						linhaNumeroAnalisado = 8;
+					}
+
+					linhasRestantes = retornaLinhasRestantes(linhaNumeroAnalisado, linhasPossiveis);
+					colunasRestantes = retornaColunasRestantes(colunaNumeroAnalisado, colunasPossiveis);
+					
+					contador = 0;
+					for (int j = 0; j < linhasRestantes.size(); j++) {
+						for (int jj = 0; jj < colunasRestantes.size(); jj++) {
+							if(matriz[linhasRestantes.get(j)][colunasRestantes.get(jj)] == 0) {
+								contador++;
+								linhaSetar = linhasRestantes.get(j);
+								colunaSetar = colunasRestantes.get(jj);
+							}
+						}
+					}
+					if(contador == 1) {
+						SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaSetar, colunaSetar, matriz, "REGRA_13");
+					}
+				}
+			}
+		}
+	}
+	
+	public void regra13Quadrantes258(int[][] matriz, List<Integer> colunasPossiveis) {
+		// Quadrantes 2, 5 e 8 
+		List<Integer> listaElemQuad01 = SudokuUtil.retornaElementosQuadrante(2, matriz);
+		
+		int numeroAnalisado = -1;
+		int linhaNumeroAnalisado = -1;
+		int colunaNumeroAnalisado = -1;
+		int existeNumeroQuadrante05 = 0;
+		int existeNumeroQuadrante08 = 0;
+		int existeNumeroLinha03 = 0;
+		int existeNumeroLinha04 = 0;
+		int existeNumeroLinha05 = 0;
+		int existeNumeroLinha06 = 0;
+		int existeNumeroLinha07 = 0;
+		int existeNumeroLinha08 = 0;
+		
+		List<Integer> linhasRestantes = null;
+		List<Integer> colunasRestantes = null;
+		List<Integer> linhasPossiveis = new ArrayList<>();
+				
+		for (int i = 0; i < listaElemQuad01.size(); i++) {
+			numeroAnalisado = listaElemQuad01.get(i);
+			existeNumeroQuadrante05 = SudokuUtil.existeNumeroQuadrante(numeroAnalisado, 5, matriz);
+			if(existeNumeroQuadrante05 == 0) {
+				
+				System.out.println("Analisando numero "+numeroAnalisado+" no quandrante "+5);
+				existeNumeroLinha03 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 3, matriz);
+				existeNumeroLinha04 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 4, matriz);
+				existeNumeroLinha05 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 5, matriz);
+				
+				linhasPossiveis.clear();
+				linhasPossiveis.add(3);
+				linhasPossiveis.add(4);
+				linhasPossiveis.add(5);
+				
+				int contador = 0;
+				int linhaSetar = -1;
+				int colunaSetar = -1;
+				
+				if((existeNumeroLinha03+existeNumeroLinha04+existeNumeroLinha05 == 1)) {  
+					
+					colunaNumeroAnalisado = SudokuUtil.qualColunaNumeroEstaNoQuadrante(numeroAnalisado, 2, matriz);
+					if(existeNumeroLinha03 == 1) {
+						linhaNumeroAnalisado = 3;
+					}
+					else if(existeNumeroLinha04 == 1) {
+						linhaNumeroAnalisado = 4;
+					}
+					else if(existeNumeroLinha05 == 1) {
+						linhaNumeroAnalisado = 5;
+					}
+
+					linhasRestantes = retornaLinhasRestantes(linhaNumeroAnalisado, linhasPossiveis);
+					colunasRestantes = retornaColunasRestantes(colunaNumeroAnalisado, colunasPossiveis);
+					
+					contador = 0;
+					for (int j = 0; j < linhasRestantes.size(); j++) {
+						for (int jj = 0; jj < colunasRestantes.size(); jj++) {
+							if(matriz[linhasRestantes.get(j)][colunasRestantes.get(jj)] == 0) {
+								contador++;
+								linhaSetar = linhasRestantes.get(j);
+								colunaSetar = colunasRestantes.get(jj);
+							}
+						}
+					}
+					if(contador == 1) {
+						SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaSetar, colunaSetar, matriz, "REGRA_13");
+					}
+					
+				}
+			}
+			existeNumeroQuadrante08 = SudokuUtil.existeNumeroQuadrante(numeroAnalisado, 8, matriz);
+			if(existeNumeroQuadrante08 == 0) {
+				System.out.println("Analisando numero "+numeroAnalisado+" no quandrante "+8);
+				existeNumeroLinha06 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 6, matriz);
+				existeNumeroLinha07 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 7, matriz);
+				existeNumeroLinha08 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 8, matriz);
+				
+				linhasPossiveis.clear();
+				linhasPossiveis.add(6);
+				linhasPossiveis.add(7);
+				linhasPossiveis.add(8);
+				
+				int contador = 0;
+				int linhaSetar = -1;
+				int colunaSetar = -1;
+
+				if((existeNumeroLinha06+existeNumeroLinha07+existeNumeroLinha08 == 1)) {
+					
+					colunaNumeroAnalisado = SudokuUtil.qualColunaNumeroEstaNoQuadrante(numeroAnalisado, 2, matriz);
+					if(existeNumeroLinha06 == 1) {
+						linhaNumeroAnalisado = 6;
+					}
+					else if(existeNumeroLinha07 == 1) {
+						linhaNumeroAnalisado = 7;
+					}
+					else if(existeNumeroLinha08 == 1) {
+						linhaNumeroAnalisado = 8;
+					}
+
+					linhasRestantes = retornaLinhasRestantes(linhaNumeroAnalisado, linhasPossiveis);
+					colunasRestantes = retornaColunasRestantes(colunaNumeroAnalisado, colunasPossiveis);
+					
+					contador = 0;
+					for (int j = 0; j < linhasRestantes.size(); j++) {
+						for (int jj = 0; jj < colunasRestantes.size(); jj++) {
+							if(matriz[linhasRestantes.get(j)][colunasRestantes.get(jj)] == 0) {
+								contador++;
+								linhaSetar = linhasRestantes.get(j);
+								colunaSetar = colunasRestantes.get(jj);
+							}
+						}
+					}
+					if(contador == 1) {
+						SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaSetar, colunaSetar, matriz, "REGRA_13");
+					}
+				}
+			}
+		}
+	}
+	
+	public void regra13Quadrantes369(int[][] matriz, List<Integer> colunasPossiveis) {
+		// Quadrantes 3, 6 e 9 
+		List<Integer> listaElemQuad01 = SudokuUtil.retornaElementosQuadrante(3, matriz);
+		
+		int numeroAnalisado = -1;
+		int linhaNumeroAnalisado = -1;
+		int colunaNumeroAnalisado = -1;
+		int existeNumeroQuadrante06 = 0;
+		int existeNumeroQuadrante09 = 0;
+		int existeNumeroLinha03 = 0;
+		int existeNumeroLinha04 = 0;
+		int existeNumeroLinha05 = 0;
+		int existeNumeroLinha06 = 0;
+		int existeNumeroLinha07 = 0;
+		int existeNumeroLinha08 = 0;
+		
+		List<Integer> linhasRestantes = null;
+		List<Integer> colunasRestantes = null;
+		List<Integer> linhasPossiveis = new ArrayList<>();
+				
+		for (int i = 0; i < listaElemQuad01.size(); i++) {
+			numeroAnalisado = listaElemQuad01.get(i);
+			existeNumeroQuadrante06 = SudokuUtil.existeNumeroQuadrante(numeroAnalisado, 6, matriz);
+			if(existeNumeroQuadrante06 == 0) {
+				
+				System.out.println("Analisando numero "+numeroAnalisado+" no quandrante "+6);
+				existeNumeroLinha03 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 3, matriz);
+				existeNumeroLinha04 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 4, matriz);
+				existeNumeroLinha05 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 5, matriz);
+				
+				linhasPossiveis.clear();
+				linhasPossiveis.add(3);
+				linhasPossiveis.add(4);
+				linhasPossiveis.add(5);
+				
+				int contador = 0;
+				int linhaSetar = -1;
+				int colunaSetar = -1;
+				
+				if((existeNumeroLinha03+existeNumeroLinha04+existeNumeroLinha05 == 1)) {  
+					
+					colunaNumeroAnalisado = SudokuUtil.qualColunaNumeroEstaNoQuadrante(numeroAnalisado, 3, matriz);
+					if(existeNumeroLinha03 == 1) {
+						linhaNumeroAnalisado = 3;
+					}
+					else if(existeNumeroLinha04 == 1) {
+						linhaNumeroAnalisado = 4;
+					}
+					else if(existeNumeroLinha05 == 1) {
+						linhaNumeroAnalisado = 5;
+					}
+
+					linhasRestantes = retornaLinhasRestantes(linhaNumeroAnalisado, linhasPossiveis);
+					colunasRestantes = retornaColunasRestantes(colunaNumeroAnalisado, colunasPossiveis);
+					
+					contador = 0;
+					for (int j = 0; j < linhasRestantes.size(); j++) {
+						for (int jj = 0; jj < colunasRestantes.size(); jj++) {
+							if(matriz[linhasRestantes.get(j)][colunasRestantes.get(jj)] == 0) {
+								contador++;
+								linhaSetar = linhasRestantes.get(j);
+								colunaSetar = colunasRestantes.get(jj);
+							}
+						}
+					}
+					if(contador == 1) {
+						SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaSetar, colunaSetar, matriz, "REGRA_13");
+					}
+				}
+			}
+			existeNumeroQuadrante09 = SudokuUtil.existeNumeroQuadrante(numeroAnalisado, 9, matriz);
+			if(existeNumeroQuadrante09 == 0) {
+				System.out.println("Analisando numero "+numeroAnalisado+" no quandrante "+9);
+				existeNumeroLinha06 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 6, matriz);
+				existeNumeroLinha07 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 7, matriz);
+				existeNumeroLinha08 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 8, matriz);
+				
+				linhasPossiveis.clear();
+				linhasPossiveis.add(6);
+				linhasPossiveis.add(7);
+				linhasPossiveis.add(8);
+				
+				int contador = 0;
+				int linhaSetar = -1;
+				int colunaSetar = -1;
+
+				if((existeNumeroLinha06+existeNumeroLinha07+existeNumeroLinha08 == 1)) {
+					
+					colunaNumeroAnalisado = SudokuUtil.qualColunaNumeroEstaNoQuadrante(numeroAnalisado, 3, matriz);
+					if(existeNumeroLinha06 == 1) {
+						linhaNumeroAnalisado = 6;
+					}
+					else if(existeNumeroLinha07 == 1) {
+						linhaNumeroAnalisado = 7;
+					}
+					else if(existeNumeroLinha08 == 1) {
+						linhaNumeroAnalisado = 8;
+					}
+
+					linhasRestantes = retornaLinhasRestantes(linhaNumeroAnalisado, linhasPossiveis);
+					colunasRestantes = retornaColunasRestantes(colunaNumeroAnalisado, colunasPossiveis);
+					
+					contador = 0;
+					for (int j = 0; j < linhasRestantes.size(); j++) {
+						for (int jj = 0; jj < colunasRestantes.size(); jj++) {
+							if(matriz[linhasRestantes.get(j)][colunasRestantes.get(jj)] == 0) {
+								contador++;
+								linhaSetar = linhasRestantes.get(j);
+								colunaSetar = colunasRestantes.get(jj);
+							}
+						}
+					}
+					if(contador == 1) {
+						SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaSetar, colunaSetar, matriz, "REGRA_13");
+					}
+				}
+			}
+		}
+	}	
+	
+	public void regra14Quadrantes417(int[][] matriz, List<Integer> colunasPossiveis) {
+		// Quadrantes 4, 1 e 7 
+		List<Integer> listaElemQuad01 = SudokuUtil.retornaElementosQuadrante(4, matriz);
+		
+		int numeroAnalisado = -1;
+		int linhaNumeroAnalisado = -1;
+		int colunaNumeroAnalisado = -1;
+		int existeNumeroQuadrante01 = 0;
+		int existeNumeroQuadrante07 = 0;
+		int existeNumeroLinha00 = 0;
+		int existeNumeroLinha01 = 0;
+		int existeNumeroLinha02 = 0;
+		int existeNumeroLinha06 = 0;
+		int existeNumeroLinha07 = 0;
+		int existeNumeroLinha08 = 0;
+		
+		Set<Integer> linhasQuadrantes01 = new HashSet<>();
+		Set<Integer> colunasQuadrantes01 = new HashSet<>();
+
+		Set<Integer> linhasQuadrantes07 = new HashSet<>();
+		Set<Integer> colunasQuadrantes07 = new HashSet<>();
+		
+		List<Integer> linhasRestantes = null;
+		List<Integer> colunasRestantes = null;
+		List<Integer> linhasPossiveis = new ArrayList<>();
+				
+		for (int i = 0; i < listaElemQuad01.size(); i++) {
+			//if(numeroAnalisado != 0) {
+				
+				numeroAnalisado = listaElemQuad01.get(i);
+				colunaNumeroAnalisado = SudokuUtil.qualColunaNumeroEstaNoQuadrante(numeroAnalisado, 4, matriz);
+				existeNumeroQuadrante01 = SudokuUtil.existeNumeroQuadrante(numeroAnalisado, 1, matriz);
+				if(existeNumeroQuadrante01 == 0) {
+					
+					System.out.println("Analisando numero "+numeroAnalisado+" no quandrante "+1);
+					existeNumeroLinha00 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 0, matriz);
+					existeNumeroLinha01 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 1, matriz);
+					existeNumeroLinha02 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 2, matriz);
+					
+					linhasPossiveis.clear();
+					linhasPossiveis.add(0);
+					linhasPossiveis.add(1);
+					linhasPossiveis.add(2);
+					
+					if((existeNumeroLinha00+existeNumeroLinha01+existeNumeroLinha02 == 1)) {  
+						
+						if(existeNumeroLinha00 == 1) {
+							linhaNumeroAnalisado = 0;
+						}
+						else if(existeNumeroLinha01 == 1) {
+							linhaNumeroAnalisado = 1;
+						}
+						else if(existeNumeroLinha02 == 1) {
+							linhaNumeroAnalisado = 2;
+						}
+	
+						linhasRestantes = retornaLinhasRestantes(linhaNumeroAnalisado, linhasPossiveis);
+						colunasRestantes = retornaColunasRestantes(colunaNumeroAnalisado, colunasPossiveis);
+	
+						colunasQuadrantes01.clear();
+	
+						for (int j = 0; j < linhasRestantes.size(); j++) {
+							for (int jj = 0; jj < colunasRestantes.size(); jj++) {
+								if(matriz[linhasRestantes.get(j)][colunasRestantes.get(jj)] == 0) {
+									linhasQuadrantes01.add(linhasRestantes.get(j));
+									colunasQuadrantes01.add(colunasRestantes.get(jj));
+								}
+							}
+						}
+					}
+				}
+				existeNumeroQuadrante07 = SudokuUtil.existeNumeroQuadrante(numeroAnalisado, 7, matriz);
+				if(existeNumeroQuadrante07 == 0) {
+					System.out.println("Analisando numero "+numeroAnalisado+" no quandrante "+7);
+					existeNumeroLinha06 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 6, matriz);
+					existeNumeroLinha07 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 7, matriz);
+					existeNumeroLinha08 = SudokuUtil.existeNumeroNaLinha(numeroAnalisado, 8, matriz);
+					
+					linhasPossiveis.clear();
+					linhasPossiveis.add(6);
+					linhasPossiveis.add(7);
+					linhasPossiveis.add(8);
+					
+					if((existeNumeroLinha06+existeNumeroLinha07+existeNumeroLinha08 == 1)) {
+						
+						if(existeNumeroLinha06 == 1) {
+							linhaNumeroAnalisado = 6;
+						}
+						else if(existeNumeroLinha07 == 1) {
+							linhaNumeroAnalisado = 7;
+						}
+						else if(existeNumeroLinha08 == 1) {
+							linhaNumeroAnalisado = 8;
+						}
+	
+						linhasRestantes = retornaLinhasRestantes(linhaNumeroAnalisado, linhasPossiveis);
+						colunasRestantes = retornaColunasRestantes(colunaNumeroAnalisado, colunasPossiveis);
+	
+						colunasQuadrantes07.clear();
+						for (int j = 0; j < linhasRestantes.size(); j++) {
+							for (int jj = 0; jj < colunasRestantes.size(); jj++) {
+								if(matriz[linhasRestantes.get(j)][colunasRestantes.get(jj)] == 0) {
+									linhasQuadrantes07.add(linhasRestantes.get(j));
+									colunasQuadrantes07.add(colunasRestantes.get(jj));
+								}
+							}
+						}
+					}
+				}
+				
+				if(colunasQuadrantes01.size() == 1) {
+
+					List<Integer> colunasEncontradas = new ArrayList<>();
+					colunasEncontradas.add(colunaNumeroAnalisado);
+					colunasEncontradas.add(colunasQuadrantes01.iterator().next());
+					
+					int colunaRestante = colunasPossiveis.stream()
+							.distinct().
+							filter(aObject -> !colunasEncontradas.contains(aObject)).
+							collect(Collectors.toList()).get(0);
+					
+					colunasQuadrantes07.clear();
+					colunasQuadrantes07.add(colunaRestante);
+
+					if(linhasQuadrantes07.size() == 1 && colunasQuadrantes07.size() == 1) {
+						SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhasQuadrantes07.iterator().next(), colunaRestante, matriz, "regra14Quadrantes417");
+					}
+
+				} else if(colunasQuadrantes07.size() == 1) {
+					
+					List<Integer> colunasEncontradas = new ArrayList<>();
+					colunasEncontradas.add(colunaNumeroAnalisado);
+					colunasEncontradas.add(colunasQuadrantes07.iterator().next());
+					
+					int colunaRestante = colunasPossiveis.stream()
+							.distinct().
+							filter(aObject -> !colunasEncontradas.contains(aObject)).
+							collect(Collectors.toList()).get(0);
+					
+					colunasQuadrantes01.clear();
+					colunasQuadrantes01.add(colunaRestante);
+					
+					if(linhasQuadrantes01.size() == 1 && colunasQuadrantes01.size() == 1) {
+						SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhasQuadrantes01.iterator().next(), colunaRestante, matriz, "regra14Quadrantes417");
+					}
+				}
+				
+			//}
+		} // fim do for 
+		
+
+			
+	}	
+
+	public void regra14Quadrantes321(int[][] matriz, List<Integer> linhasPossiveis) {
+		// Quadrantes 3, 2 e 1 
+		List<Integer> listaElemQuad03 = SudokuUtil.retornaElementosQuadrante(3, matriz);
+		
+		int numeroAnalisado = -1;
+		int linhaNumeroAnalisado = -1;
+		int colunaNumeroAnalisado = -1;
+		
+		int existeNumeroQuadrante01 = 0;
+		int existeNumeroQuadrante02 = 0;
+		
+		int existeNumeroColuna00 = 0;
+		int existeNumeroColuna01 = 0;
+		int existeNumeroColuna02 = 0;
+		
+		int existeNumeroColuna03 = 0;
+		int existeNumeroColuna04 = 0;
+		int existeNumeroColuna05 = 0;
+		
+		Set<Integer> linhasQuadrantes01 = new HashSet<>();
+		Set<Integer> colunasQuadrantes01 = new HashSet<>();
+
+		Set<Integer> linhasQuadrantes02 = new HashSet<>();
+		Set<Integer> colunasQuadrantes02 = new HashSet<>();
+		
+		List<Integer> linhasRestantes = null;
+		List<Integer> colunasRestantes = null;
+		List<Integer> colunasPossiveis = new ArrayList<>();
+				
+		for (int i = 0; i < listaElemQuad03.size(); i++) {
+				
+			numeroAnalisado = listaElemQuad03.get(i);
+			linhaNumeroAnalisado = SudokuUtil.qualLinhaNumeroEstaNoQuadrante(numeroAnalisado, 3, matriz);
+			existeNumeroQuadrante02 = SudokuUtil.existeNumeroQuadrante(numeroAnalisado, 2, matriz);
+			if(existeNumeroQuadrante02 == 0) {
+				
+				System.out.println("Analisando numero "+numeroAnalisado+" no quandrante "+2);
+				existeNumeroColuna03 = SudokuUtil.existeNumeroNaColuna(numeroAnalisado, 3, matriz);
+				existeNumeroColuna04 = SudokuUtil.existeNumeroNaColuna(numeroAnalisado, 4, matriz);
+				existeNumeroColuna05 = SudokuUtil.existeNumeroNaColuna(numeroAnalisado, 5, matriz);
+				
+				colunasPossiveis.clear();
+				colunasPossiveis.add(3);
+				colunasPossiveis.add(4);
+				colunasPossiveis.add(5);
+
+				
+				if((existeNumeroColuna03 + existeNumeroColuna04 + existeNumeroColuna05 == 1)) {  
+					
+					if(existeNumeroColuna03 == 1) {
+						colunaNumeroAnalisado = 3;
+					}
+					else if(existeNumeroColuna04 == 1) {
+						colunaNumeroAnalisado = 4;
+					}
+					else if(existeNumeroColuna05 == 1) {
+						colunaNumeroAnalisado = 5;
+					}
+
+					linhasRestantes = retornaLinhasRestantes(linhaNumeroAnalisado, linhasPossiveis);
+					colunasRestantes = retornaColunasRestantes(colunaNumeroAnalisado, colunasPossiveis);
+
+					linhasQuadrantes02.clear();
+					colunasQuadrantes02.clear();
+
+					for (int j = 0; j < linhasRestantes.size(); j++) {
+						for (int jj = 0; jj < colunasRestantes.size(); jj++) {
+							if(matriz[linhasRestantes.get(j)][colunasRestantes.get(jj)] == 0) {
+								linhasQuadrantes02.add(linhasRestantes.get(j));
+								colunasQuadrantes02.add(colunasRestantes.get(jj));
+							}
+						}
+					}
+				}
+			}
+			existeNumeroQuadrante01 = SudokuUtil.existeNumeroQuadrante(numeroAnalisado, 1, matriz);
+			if(existeNumeroQuadrante01 == 0) {
+				System.out.println("Analisando numero "+numeroAnalisado+" no quandrante "+1);
+				existeNumeroColuna00 = SudokuUtil.existeNumeroNaColuna(numeroAnalisado, 0, matriz);
+				existeNumeroColuna01 = SudokuUtil.existeNumeroNaColuna(numeroAnalisado, 1, matriz);
+				existeNumeroColuna02 = SudokuUtil.existeNumeroNaColuna(numeroAnalisado, 2, matriz);
+				
+				colunasPossiveis.clear();
+				colunasPossiveis.add(0);
+				colunasPossiveis.add(1);
+				colunasPossiveis.add(2);
+				
+				if((existeNumeroColuna00+existeNumeroColuna01+existeNumeroColuna02 == 1)) {
+					
+					if(existeNumeroColuna00 == 1) {
+						colunaNumeroAnalisado = 0;
+					}
+					else if(existeNumeroColuna01 == 1) {
+						colunaNumeroAnalisado = 1;
+					}
+					else if(existeNumeroColuna02 == 1) {
+						colunaNumeroAnalisado = 2;
+					}
+
+					linhasRestantes = retornaLinhasRestantes(linhaNumeroAnalisado, linhasPossiveis);
+					colunasRestantes = retornaColunasRestantes(colunaNumeroAnalisado, colunasPossiveis);
+
+					linhasQuadrantes01.clear();
+					colunasQuadrantes01.clear();
+					
+					for (int j = 0; j < linhasRestantes.size(); j++) {
+						for (int jj = 0; jj < colunasRestantes.size(); jj++) {
+							if(matriz[linhasRestantes.get(j)][colunasRestantes.get(jj)] == 0) {
+								linhasQuadrantes01.add(linhasRestantes.get(j));
+								colunasQuadrantes01.add(colunasRestantes.get(jj));
+							}
+						}
+					}
+				}
+			}
+			
+			if(colunasQuadrantes01.size() == 1 && colunasQuadrantes01.size() == 1) {
+				SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhasQuadrantes01.iterator().next(), colunasQuadrantes01.iterator().next(), matriz, "regra14Quadrantes321");
+			}
+			else if(colunasQuadrantes01.size() == 1 && linhasQuadrantes01.size() > 0) {
+
+				List<Integer> colunasEncontradas = new ArrayList<>();
+				colunasEncontradas.add(colunaNumeroAnalisado);
+				colunasEncontradas.add(colunasQuadrantes01.iterator().next());
+				
+				int colunaRestante = colunasPossiveis.stream()
+						.distinct().
+						filter(aObject -> !colunasEncontradas.contains(aObject)).
+						collect(Collectors.toList()).get(0);
+				
+				colunasQuadrantes02.clear();
+				colunasQuadrantes02.add(colunaRestante);
+
+				if(linhasQuadrantes02.size() == 1 && colunasQuadrantes02.size() == 1) {
+					SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhasQuadrantes02.iterator().next(), colunaRestante, matriz, "regra14Quadrantes321");
+				}
+
+			} else if(colunasQuadrantes02.size() == 1) {
+				
+				List<Integer> colunasEncontradas = new ArrayList<>();
+				colunasEncontradas.add(colunaNumeroAnalisado);
+				colunasEncontradas.add(colunasQuadrantes02.iterator().next());
+				
+				int colunaRestante = colunasPossiveis.stream()
+						.distinct().
+						filter(aObject -> !colunasEncontradas.contains(aObject)).
+						collect(Collectors.toList()).get(0);
+				
+				colunasQuadrantes01.clear();
+				colunasQuadrantes01.add(colunaRestante);
+				
+				if(linhasQuadrantes01.size() == 1 && colunasQuadrantes01.size() == 1) {
+					SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhasQuadrantes01.iterator().next(), colunaRestante, matriz, "regra14Quadrantes321");
+				}
+			}
+		} // fim do for 
+	}	
+	
 	// TODO Reduzir de 65 para 15
 	public void regra11Camada01(int[][] matriz, List<Integer> linhasPossiveis) {
 		// Quadrantes 1, 2 e 3 
@@ -433,6 +1155,7 @@ public class Sudoku {
 		
 		List<Integer> linhasRestantes = null;
 		List<Integer> colunasRestantes = null;
+		List<Integer> colunasPossiveis = new ArrayList<>();
 				
 		for (int i = 0; i < listaElemQuad01.size(); i++) {
 			numeroAnalisado = listaElemQuad01.get(i);
@@ -444,7 +1167,7 @@ public class Sudoku {
 				existeNumeroColuna04 = SudokuUtil.existeNumeroNaColuna(numeroAnalisado, 4, matriz);
 				existeNumeroColuna05 = SudokuUtil.existeNumeroNaColuna(numeroAnalisado, 5, matriz);
 				
-				List<Integer> colunasPossiveis = new ArrayList<>();
+				colunasPossiveis.clear();
 				colunasPossiveis.add(3);
 				colunasPossiveis.add(4);
 				colunasPossiveis.add(5);
@@ -478,9 +1201,9 @@ public class Sudoku {
 								colunaSetar = colunasRestantes.get(jj);
 							}
 						}
-						if(contador == 1) {
-							SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaSetar, colunaSetar, matriz, "REGRA_11");
-						}
+					}
+					if(contador == 1) {
+						SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaSetar, colunaSetar, matriz, "REGRA_11");
 					}
 				}
 			}
@@ -491,7 +1214,7 @@ public class Sudoku {
 				existeNumeroColuna07 = SudokuUtil.existeNumeroNaColuna(numeroAnalisado, 7, matriz);
 				existeNumeroColuna08 = SudokuUtil.existeNumeroNaColuna(numeroAnalisado, 8, matriz);
 				
-				List<Integer> colunasPossiveis = new ArrayList<>();
+				colunasPossiveis.clear();
 				colunasPossiveis.add(6);
 				colunasPossiveis.add(7);
 				colunasPossiveis.add(8);
@@ -525,13 +1248,12 @@ public class Sudoku {
 								colunaSetar = colunasRestantes.get(jj);
 							}
 						}
-						if(contador == 1) {
-							SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaSetar, colunaSetar, matriz, "REGRA_11");
-						}
+					}
+					if(contador == 1) {
+						SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaSetar, colunaSetar, matriz, "REGRA_11");
 					}
 				}
 			}
-			
 		}
 	}
 
@@ -598,9 +1320,9 @@ public class Sudoku {
 								colunaSetar = colunasRestantes.get(jj);
 							}
 						}
-						if(contador == 1) {
-							SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaSetar, colunaSetar, matriz, "REGRA_11");
-						}
+					}
+					if(contador == 1) {
+						SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaSetar, colunaSetar, matriz, "REGRA_11");
 					}
 				}
 			}
@@ -645,13 +1367,12 @@ public class Sudoku {
 								colunaSetar = colunasRestantes.get(jj);
 							}
 						}
-						if(contador == 1) {
-							SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaSetar, colunaSetar, matriz, "REGRA_11");
-						}
+					}
+					if(contador == 1) {
+						SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaSetar, colunaSetar, matriz, "REGRA_11");
 					}
 				}
 			}
-			
 		}
 	}
 
@@ -718,9 +1439,9 @@ public class Sudoku {
 								colunaSetar = colunasRestantes.get(jj);
 							}
 						}
-						if(contador == 1) {
-							SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaSetar, colunaSetar, matriz, "REGRA_11");
-						}
+					}
+					if(contador == 1) {
+						SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaSetar, colunaSetar, matriz, "REGRA_11");
 					}
 				}
 			}
@@ -765,13 +1486,12 @@ public class Sudoku {
 								colunaSetar = colunasRestantes.get(jj);
 							}
 						}
-						if(contador == 1) {
-							SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaSetar, colunaSetar, matriz, "REGRA_11");
-						}
+					}
+					if(contador == 1) {
+						SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaSetar, colunaSetar, matriz, "REGRA_11");
 					}
 				}
 			}
-			
 		}
 	}
 	
@@ -876,10 +1596,14 @@ public class Sudoku {
 					}
 				}
 				//
-				if(contador == 1) { // achou a linha e a coluna do numero
-					SudokuUtil.setValorNaLinhaColuna(
-						numeroAnalisado, linhaSetar, colunaNumeroAnalisado, matriz, "REGRA_10");
-				}
+//				if(contador == 1) { // achou a linha e a coluna do numero
+//					SudokuUtil.setValorNaLinhaColuna(
+//						numeroAnalisado, linhaSetar, colunaNumeroAnalisado, matriz, "REGRA_10");
+//				}
+			}
+			if(contador == 1) { // achou a linha e a coluna do numero
+				SudokuUtil.setValorNaLinhaColuna(
+					numeroAnalisado, linhaSetar, colunaNumeroAnalisado, matriz, "REGRA_10");
 			}
 		}
 	}

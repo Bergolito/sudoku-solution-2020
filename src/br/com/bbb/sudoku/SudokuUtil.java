@@ -257,21 +257,22 @@ public class SudokuUtil {
         
         Collections.sort(elementosRetorno);
 
-		return SudokuUtil.retornaNumerosPossiveis(matriz).stream()
+		List<Integer> possibs = SudokuUtil.retornaNumerosPossiveis(matriz).stream()
 				.distinct().
 				filter(aObject -> !elementosRetorno.contains(aObject)).
 				collect(Collectors.toList());
+		 
+		 return possibs;
 	}
 	
 	public static Set<Integer> pegaElementosLinha(int linha, int coluna, int[][] matriz) {
 		Set<Integer> listaElementos = new HashSet<>();
 		
- 		for (int j = 0; j < matriz[0].length; j++) {
-			if(j != coluna &&  matriz[linha][j] != 0) {
+		for (int j = 0; j < matriz[linha].length; j++) {
+			if(matriz[linha][j] != 0) {
 				listaElementos.add(matriz[linha][j]);
 			}
 		}
- 		
 		return listaElementos;
 	}
 
@@ -279,21 +280,21 @@ public class SudokuUtil {
 		Set<Integer> listaElementos = new HashSet<>();
 		
 		for (int i = 0; i < matriz.length; i++) {
-			if(i != linha && matriz[i][coluna] != 0) {
+			if(matriz[i][coluna] != 0) {
 				listaElementos.add(matriz[i][coluna]);
 			}
 		}
- 		
+		
 		return listaElementos;
 	}
 	
 	public static Set<Integer> pegaElementosQuadrante(int linha, int coluna, int[][] matriz) {
 		Set<Integer> conjuntoElementos = new HashSet<>();
 		
-		if(linha == 4 && coluna == 4) {
+		if(matriz.length == 4 && matriz[0].length == 4) {
 			conjuntoElementos = pegaElementosQuadrante4X4(linha, coluna, matriz);
 			
-		} else if(linha == 9 && coluna == 9) {
+		} else if(matriz.length == 9 && matriz[0].length == 9) {
 			conjuntoElementos = pegaElementosQuadrante9X9(linha, coluna, matriz);
 		}
 		
@@ -347,6 +348,47 @@ public class SudokuUtil {
 	}
 	
 	public static Set<Integer> pegaElementosQuadrante9X9(int linha, int coluna, int[][] matriz) {
+		List<Integer> elementos = null;
+		Set<Integer> resultado = new HashSet<>();
+		
+		if(linha >= 0 && linha <= 2) {
+			
+			if(coluna >= 0 && coluna <= 2) {
+				elementos = SudokuUtil.retornaElementosQuadrante(1, matriz);
+			} else if(coluna >= 3 && coluna <= 5) {
+				elementos = SudokuUtil.retornaElementosQuadrante(2, matriz);
+			} else if(coluna >= 6 && coluna <= 8) {
+				elementos = SudokuUtil.retornaElementosQuadrante(3, matriz);
+			}
+			
+		} else if(linha >= 3 && linha <= 5) {
+			
+			if(coluna >= 0 && coluna <= 2) {
+				elementos = SudokuUtil.retornaElementosQuadrante(4, matriz);
+			} else if(coluna >= 3 && coluna <= 5) {
+				elementos = SudokuUtil.retornaElementosQuadrante(5, matriz);
+			} else if(coluna >= 6 && coluna <= 8) {
+				elementos = SudokuUtil.retornaElementosQuadrante(6, matriz);
+			}
+			
+		} else if(linha >= 6 && linha <= 8) {
+			
+			if(coluna >= 0 && coluna <= 2) {
+				elementos = SudokuUtil.retornaElementosQuadrante(7, matriz);
+			} else if(coluna >= 3 && coluna <= 5) {
+				elementos = SudokuUtil.retornaElementosQuadrante(8, matriz);
+			} else if(coluna >= 6 && coluna <= 8) {
+				elementos = SudokuUtil.retornaElementosQuadrante(9, matriz);
+			}
+			
+		}
+		
+		elementos.forEach(elem->resultado.add(elem));
+		
+		return resultado;
+	}
+	
+	public static Set<Integer> OLDpegaElementosQuadrante9X9OLD(int linha, int coluna, int[][] matriz) {
 		Set<Integer> listaElementos = new HashSet<>();
 		int linhaInicio = 0;
 		int linhaFim = 0;
@@ -637,13 +679,92 @@ public class SudokuUtil {
 		}
 	}
 
+	public static void imprimeMatrizPossibilidades9X9(int[][] matriz) {
+		int qtdPossib = -1;
+		List<Integer> possibs = null;
+		List<Posicao> posicoes = new ArrayList<>();
+
+		System.out.print("=================================\n");
+		System.out.print("Matriz de Possibilidades         \n");
+		System.out.print("=================================\n");
+
+		for (int i = 0; i < matriz.length; i++) {
+			
+			if(i != 3 && i != 6) {
+				System.out.print(i+" [");
+			} else if(i == 3 || i == 6) {
+				System.out.println("   ------------------------");
+				System.out.print(i+" [");
+			}
+			posicoes.clear();
+			for (int j = 0; j < matriz[i].length; j++) {
+				
+				possibs = SudokuUtil.qtdPossibilidadesCelula(i, j, matriz);
+				qtdPossib = possibs.size();
+				if(matriz[i][j] == 0 && qtdPossib == 1) {
+					posicoes.add(new Posicao(i, j, possibs.get(0)));
+				}
+				if(j != matriz[i].length-1) {
+					
+					if(matriz[i][j] == 0) {
+						
+						
+						if(j != 3 && j != 6 ) {
+							System.out.print(" "+qtdPossib+"");	
+						} else if(j == 3 || j == 6) {
+							System.out.print(" | "+qtdPossib+"");
+						}
+							
+					} else {
+						
+						if(j != 3 && j != 6 ) {
+							System.out.print(" _");	
+						} else if(j == 3 || j == 6) {
+							System.out.print(" | _");
+						}
+						
+					}
+					
+				}
+				else {
+					
+					if(matriz[i][j] == 0) {
+						System.out.println(" "+qtdPossib+" ]");	
+
+					} else {
+						System.out.println(" _ ]");
+					}
+				}
+			}
+
+		}
+		
+		System.out.println("======================================\n");
+		System.out.println(" Células com 01 possibilidade         \n");
+		System.out.println("======================================\n");
+		posicoes.forEach(pos->System.out.println("("+pos.getX()+","+pos.getY()+")="+pos.getValor()));
+		System.out.println("======================================\n");
+
+		//
+		possibs.clear();
+		for (int i = 0; i < matriz.length; i++) {
+			for (int j = 0; j < matriz[i].length; j++) {
+				possibs = SudokuUtil.qtdPossibilidadesCelula(i, j, matriz);
+				if(possibs.size() == 2) {
+					System.out.println("("+i+","+j+") => ["+possibs+"]");
+				}
+			}
+		}
+	}
+
 	public static void imprimeMatriz4X4(int[][] matriz) {
 		System.out.print("=================================\n");
 		for (int i = 0; i < matriz.length; i++) {
 			
 			if(i != 2 ) {
 				System.out.print(i+" [");
-			} else if(i == 2) {
+			} 
+			else if(i == 2) {
 				System.out.println("  -------------");
 				System.out.print(i+" [");
 			}
