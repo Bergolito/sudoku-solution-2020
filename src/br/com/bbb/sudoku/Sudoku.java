@@ -98,12 +98,116 @@ public class Sudoku {
 				// Regra 14
 				regra14(matriz);
 				
+				//regra15(matriz);
+				
 				ciclo++;
 			}
 
 		} while (SudokuUtil.existeCelulaVazia(matriz) && ciclo <= 10);
 
 		System.out.println("\n\n TERMINOU ANALISE. Qtd de inferências = "+(++SudokuUtil.inferencias));
+	}
+
+	public void testaSolucao(int[][] matriz) {
+
+		int ciclo = 0;
+		//do {
+
+			if(matriz.length == 4) {
+				// Regra 01
+				regra01(matriz);
+				
+			} else if(matriz.length == 9) {
+
+				// Regra 01
+				regra01(matriz);
+				
+				// Regra 02
+				regra02(matriz);
+
+				// Regra 03
+				regra03(matriz);
+
+				// Regra 04
+				regra04(matriz);
+				
+				// Regra 05
+				regra05(matriz);
+				
+				// Regra 06
+				regra06(matriz);
+				
+				// Regra 07
+				regra07(matriz);
+				
+				// Regra 08
+				regra08(matriz);
+				
+				// Regra 09
+				regra09(matriz);
+
+				// Regra 10 (CANCELADA)
+				//regra10(matriz);
+				
+				// Regra 11
+				regra11(matriz);
+				
+				// Regra 12
+				regra12(matriz);
+
+				// Regra 13
+				regra13(matriz);
+				
+				// Regra 14
+				regra14(matriz);
+				
+				//regra15(matriz);
+				
+				//ciclo++;
+			}
+
+		//} while (SudokuUtil.existeCelulaVazia(matriz) && ciclo <= 10);
+
+		//System.out.println("\n\n TERMINOU ANALISE. Qtd de inferências = "+(++SudokuUtil.inferencias));
+	}
+	
+	public void regra15(int[][] matriz) {
+		List<Integer> possibs = new ArrayList<>();
+		System.out.println("======================================");
+		System.out.println(" Células com 02 possibilidades        ");
+		//
+		//possibs.clear();
+		for (int i = 0; i < matriz.length; i++) {
+			for (int j = 0; j < matriz[i].length; j++) {
+				possibs = SudokuUtil.qtdPossibilidadesCelula(i, j, matriz);
+				if(possibs.size() == 2) {
+					System.out.println("("+i+","+j+") => ["+possibs+"]");
+				}
+			}
+		}
+		System.out.println("======================================");
+		
+		int[][] matrizInferencia = matriz.clone();
+		Sudoku sudoku = new Sudoku(matrizInferencia.length, matrizInferencia[0].length, matrizInferencia, null);
+		System.out.println("Matriz de inferencia:");
+		SudokuUtil.imprimeMatriz(matrizInferencia);
+		int celulasVaziasAntes = SudokuUtil.qtdCelulasVazias(matrizInferencia);
+		System.out.println("Qtd celulas antes = "+celulasVaziasAntes);
+
+		matrizInferencia[0][8] = 9;
+		matrizInferencia[4][8] = 2;
+
+		sudoku.testaSolucao(matrizInferencia);
+		int celulasVaziasDepois = SudokuUtil.qtdCelulasVazias(matrizInferencia);
+		System.out.println("Qtd celulas depois = "+celulasVaziasDepois);
+		
+		if(celulasVaziasDepois < celulasVaziasAntes) {
+			System.out.println("Funcionou");
+		} else {
+			matrizInferencia[0][8] = 2;
+			matrizInferencia[4][8] = 9;
+		}
+		
 	}
 	
 	/**
@@ -168,7 +272,8 @@ public class Sudoku {
 	
 	public void regra06(int[][] matriz) {
 		regra06Linha(matriz);
-		regra06Coluna(matriz);
+		// TODO
+		//regra06Coluna(matriz);
 	}
 	
 	/**
@@ -272,6 +377,7 @@ public class Sudoku {
 				int possib01 = numerosRestantes.get(0);
 				int possib02 = numerosRestantes.get(1);
 
+				// TODO Ajustar aqui
 				if(SudokuUtil.existeNumeroNaLinha(possib01, linhaVazia01, matriz) == 1) {
 					
 					SudokuUtil.setValorNaLinhaColuna(possib01, colunaAnalisada, linhaVazia02, matriz, REGRA06_COLUNA);
@@ -459,6 +565,7 @@ public class Sudoku {
 		linhasPossiveis.add(0);
 		linhasPossiveis.add(1);
 		linhasPossiveis.add(2);
+		// TODO Ajustar esta regra 
 		regra14Quadrantes321(matriz, linhasPossiveis);
 	}
 	
@@ -978,6 +1085,7 @@ public class Sudoku {
 			
 	}	
 
+	// TODO Ajustar esta regra 
 	public void regra14Quadrantes321(int[][] matriz, List<Integer> linhasPossiveis) {
 		// Quadrantes 3, 2 e 1 
 		List<Integer> listaElemQuad03 = SudokuUtil.retornaElementosQuadrante(3, matriz);
@@ -1094,7 +1202,8 @@ public class Sudoku {
 				}
 			}
 			
-			if(colunasQuadrantes01.size() == 1 && colunasQuadrantes01.size() == 1) {
+			// TODO Ajustar aqui
+			if(linhasQuadrantes01.size() == 1 && colunasQuadrantes01.size() == 1) {
 				SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhasQuadrantes01.iterator().next(), colunasQuadrantes01.iterator().next(), matriz, "regra14Quadrantes321");
 			}
 			else if(colunasQuadrantes01.size() == 1 && linhasQuadrantes01.size() > 0) {

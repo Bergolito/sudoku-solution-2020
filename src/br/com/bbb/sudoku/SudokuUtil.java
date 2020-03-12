@@ -739,12 +739,15 @@ public class SudokuUtil {
 
 		}
 		
-		System.out.println("======================================\n");
-		System.out.println(" Células com 01 possibilidade         \n");
-		System.out.println("======================================\n");
-		posicoes.forEach(pos->System.out.println("("+pos.getX()+","+pos.getY()+")="+pos.getValor()));
-		System.out.println("======================================\n");
-
+		if(posicoes.size() >= 1) {
+			System.out.println("======================================");
+			System.out.println(" Células com 01 possibilidade         ");
+			System.out.println("======================================\n");
+			posicoes.forEach(pos->System.out.println("("+pos.getX()+","+pos.getY()+")="+pos.getValor()));
+		}
+		
+		System.out.println("======================================");
+		System.out.println(" Células com 02 possibilidades        ");
 		//
 		possibs.clear();
 		for (int i = 0; i < matriz.length; i++) {
@@ -755,6 +758,7 @@ public class SudokuUtil {
 				}
 			}
 		}
+		System.out.println("======================================");
 	}
 
 	public static void imprimeMatriz4X4(int[][] matriz) {

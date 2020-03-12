@@ -61,6 +61,9 @@ public class Sudoku9x9FacilN06Test {
 		matriz[0][1] = 1;
 		matriz[0][2] = 8;
 		matriz[0][6] = 4;
+		// TODO
+		//matriz[0][8] = 9;
+		
 		// 1 [ _ _ _ | _ 9 6 | _ _ _ ]
 		matriz[1][4] = 9;
 		matriz[1][5] = 6;
@@ -75,6 +78,9 @@ public class Sudoku9x9FacilN06Test {
 		// 4 [ 4 _ _ | 1 _ _ | _ _ _ ]
 		matriz[4][0] = 4;
 		matriz[4][3] = 1;
+		// TODO
+		//matriz[4][8] = 2;
+		
 		// 5 [ 9 _ _ | _ 4 _ | _ _ 8 ]
 		matriz[5][0] = 9;
 		matriz[5][4] = 4;
