@@ -72,7 +72,7 @@ public class Sudoku {
 				regra05(matriz);
 				
 				// Regra 06
-				regra06(matriz);
+				//regra06(matriz);
 				
 				// Regra 07
 				regra07(matriz);
@@ -135,7 +135,7 @@ public class Sudoku {
 				regra05(matriz);
 				
 				// Regra 06
-				regra06(matriz);
+				//regra06(matriz);
 				
 				// Regra 07
 				regra07(matriz);
@@ -270,11 +270,11 @@ public class Sudoku {
 		}
 	}	
 	
-	public void regra06(int[][] matriz) {
-		regra06Linha(matriz);
+	//public void regra06(int[][] matriz) {
+		//regra06Linha(matriz);
 		// TODO
 		//regra06Coluna(matriz);
-	}
+	//}
 	
 	/**
 	 * Analisa linhas que possuem 02 posicoes restantes
