@@ -598,16 +598,17 @@ public class SudokuUtil {
 		if(matriz[linhasQuadrante.get(2)][coluna] == 0) linhaVazia = linhasQuadrante.get(2);  	
 		return linhaVazia;
 	}
-	
-	public static void setValorNaLinhaColuna(int valor, int linha, int coluna, int[][] matriz, String regraId) {
+
+	public static void setValorNaLinhaColuna(int valor, int linha, int coluna, int[][] matriz, String regraId) throws Exception {
 		if(matriz[linha][coluna] == 0) {
 			System.out.println("|>>>>>>>>>>  Setando valor => ("+linha+","+coluna+")="+valor+" Regra="+regraId+" ]");
 			matriz[linha][coluna] = valor;	
 			inferencias++;
 			imprimeMatriz(matriz);
 		} else {
-			System.out.print("\nSudoku: Não é possível setar numero em celula preenchida.  ");
-			System.out.println(" | => ("+linha+","+coluna+")="+valor+" Regra="+regraId+" ]");
+			String msg = "\nSudoku: Não é possível setar numero em celula preenchida.  " +
+					" | => ("+linha+","+coluna+")="+valor+" Regra="+regraId+" ]";
+			throw new Exception("Sudoku Error::"+msg);
 		}
 	}
 
@@ -750,14 +751,19 @@ public class SudokuUtil {
 		System.out.println(" Células com 02 possibilidades        ");
 		//
 		possibs.clear();
+		int contador = 0;
 		for (int i = 0; i < matriz.length; i++) {
 			for (int j = 0; j < matriz[i].length; j++) {
-				possibs = SudokuUtil.qtdPossibilidadesCelula(i, j, matriz);
-				if(possibs.size() == 2) {
-					System.out.println("("+i+","+j+") => ["+possibs+"]");
+				if(matriz[i][j] == 0) {
+					possibs = SudokuUtil.qtdPossibilidadesCelula(i, j, matriz);
+					if(possibs.size() == 2) {
+						System.out.println("("+i+","+j+") => ["+possibs+"]");
+						contador++;
+					}
 				}
 			}
 		}
+		System.out.println(" Células com 02 possibilidades = "+contador);
 		System.out.println("======================================");
 	}
 
@@ -1102,7 +1108,7 @@ public class SudokuUtil {
 	}
 
 	// TODO
-	public static void resolveColuna03PosicoesRestantes(int[][] matriz, int coluna) {
+	public static void resolveColuna03PosicoesRestantes(int[][] matriz, int coluna) throws Exception {
 		List<Integer> numerosPossiveis = SudokuUtil.retornaNumerosPossiveis(matriz);
 		List<Integer> numerosEncontradosColuna = new ArrayList<>();
 		List<Integer> linhasEmBranco = new ArrayList<>();
@@ -1144,10 +1150,9 @@ public class SudokuUtil {
 				SudokuUtil.setValorNaLinhaColuna(numero, linhaSetar, coluna, matriz, "REGRA12_03_Posicoes");
 			}
 		}
-
 	}
 
-	public static void resolveColuna02PosicoesRestantes(int[][] matriz, int coluna) {
+	public static void resolveColuna02PosicoesRestantes(int[][] matriz, int coluna) throws Exception {
 		List<Integer> numerosPossiveis = SudokuUtil.retornaNumerosPossiveis(matriz);
 		List<Integer> numerosEncontradosColuna = new ArrayList<>();
 		List<Integer> linhasEmBranco = new ArrayList<>();
@@ -1190,7 +1195,7 @@ public class SudokuUtil {
 	}
 	
 	// TODO Reduzir de 32 para 15
-	public static void resolveQuadrante02PosicoesRestantes(int[][] matriz) {
+	public static void resolveQuadrante02PosicoesRestantes(int[][] matriz) throws Exception {
 		// quadrantes 1,2,3 
 		List<Integer> elementosQuad1 = retornaElementosQuadrante(1, matriz);
 		List<Integer> elementosQuad2 = retornaElementosQuadrante(2, matriz);

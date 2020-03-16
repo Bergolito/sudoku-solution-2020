@@ -45,79 +45,84 @@ public class Sudoku {
 		numerosPossiveis = Arrays.asList(NUMEROS_POSSIVEIS);
 	}
 	
-	public void analisaSolucao(int[][] matriz) {
+	public boolean analisaSolucao(int[][] matriz) {
 
 		int ciclo = 0;
-		do {
+		try {
+			do {
 
-			if(matriz.length == 4) {
-				// Regra 01
-				regra01(matriz);
-				
-			} else if(matriz.length == 9) {
+				if(matriz.length == 4) {
+					// Regra 01
+					regra01(matriz);
+					
+				} else if(matriz.length == 9) {
 
-				// Regra 01
-				regra01(matriz);
-				
-				// Regra 02
-				regra02(matriz);
+					// Regra 01
+					regra01(matriz);
+					
+					// Regra 02
+					regra02(matriz);
 
-				// Regra 03
-				regra03(matriz);
+					// Regra 03
+					regra03(matriz);
 
-				// Regra 04
-				regra04(matriz);
-				
-				// Regra 05
-				regra05(matriz);
-				
-				// Regra 06
-				//regra06(matriz);
-				
-				// Regra 07
-				regra07(matriz);
-				
-				// Regra 08
-				regra08(matriz);
-				
-				// Regra 09
-				regra09(matriz);
+					// Regra 04
+					regra04(matriz);
+					
+					// Regra 05
+					regra05(matriz);
+					
+					// Regra 06
+					//regra06(matriz);
+					
+					// Regra 07
+					regra07(matriz);
+					
+					// Regra 08
+					regra08(matriz);
+					
+					// Regra 09
+					regra09(matriz);
 
-				// Regra 10 (CANCELADA)
-				//regra10(matriz);
-				
-				// Regra 11
-				regra11(matriz);
-				
-				// Regra 12
-				regra12(matriz);
+					// Regra 10 (CANCELADA)
+					//regra10(matriz);
+					
+					// Regra 11
+					regra11(matriz);
+					
+					// Regra 12
+					regra12(matriz);
 
-				// Regra 13
-				regra13(matriz);
-				
-				// Regra 14
-				regra14(matriz);
-				
-				//regra15(matriz);
-				
-				ciclo++;
-			}
+					// Regra 13
+					regra13(matriz);
+					
+					// Regra 14
+					regra14(matriz);
+					
+//					if(ciclo == 9) {
+//						regra15(matriz);
+//					}
+					
+					ciclo++;
+				}
 
-		} while (SudokuUtil.existeCelulaVazia(matriz) && ciclo <= 10);
+			} while (SudokuUtil.existeCelulaVazia(matriz) && ciclo <= 10);
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("\n\nAchou erro ao tentar setar falor");
+			System.out.println("\n\nAbortando inferencia");
+			
+		}
 
 		System.out.println("\n\n TERMINOU ANALISE. Qtd de inferências = "+(++SudokuUtil.inferencias));
+		return false;
 	}
 
-	public void testaSolucao(int[][] matriz) {
+	public boolean testaSolucao(int[][] matriz) {
 
-		int ciclo = 0;
-		//do {
-
-			if(matriz.length == 4) {
-				// Regra 01
-				regra01(matriz);
-				
-			} else if(matriz.length == 9) {
+		try {
+			if(matriz.length == 9) {
 
 				// Regra 01
 				regra01(matriz);
@@ -146,9 +151,6 @@ public class Sudoku {
 				// Regra 09
 				regra09(matriz);
 
-				// Regra 10 (CANCELADA)
-				//regra10(matriz);
-				
 				// Regra 11
 				regra11(matriz);
 				
@@ -161,53 +163,52 @@ public class Sudoku {
 				// Regra 14
 				regra14(matriz);
 				
-				//regra15(matriz);
-				
-				//ciclo++;
 			}
 
-		//} while (SudokuUtil.existeCelulaVazia(matriz) && ciclo <= 10);
 
-		//System.out.println("\n\n TERMINOU ANALISE. Qtd de inferências = "+(++SudokuUtil.inferencias));
+		} catch (Exception e) {
+			return false;
+		}
+		
+		return true;
 	}
 	
 	public void regra15(int[][] matriz) {
 		List<Integer> possibs = new ArrayList<>();
 		System.out.println("======================================");
-		System.out.println(" Células com 02 possibilidades        ");
-		//
-		//possibs.clear();
+		System.out.println(" Células com 02 possibilidades = ");
+		
+		List<Celula02Possibilidades> listaPossibs = new ArrayList<>();
 		for (int i = 0; i < matriz.length; i++) {
 			for (int j = 0; j < matriz[i].length; j++) {
-				possibs = SudokuUtil.qtdPossibilidadesCelula(i, j, matriz);
-				if(possibs.size() == 2) {
-					System.out.println("("+i+","+j+") => ["+possibs+"]");
+				if(matriz[i][j] == 0) {
+					possibs = SudokuUtil.qtdPossibilidadesCelula(i, j, matriz);
+					if(possibs.size() == 2) {
+						System.out.println("("+i+","+j+") => ["+possibs+"]");
+						listaPossibs.add(new Celula02Possibilidades(i, j, possibs.get(0),possibs.get(1)));
+					}
 				}
 			}
 		}
+		System.out.println(" Células com 02 possibilidades = "+listaPossibs.size());
 		System.out.println("======================================");
 		
-		int[][] matrizInferencia = matriz.clone();
-		Sudoku sudoku = new Sudoku(matrizInferencia.length, matrizInferencia[0].length, matrizInferencia, null);
-		System.out.println("Matriz de inferencia:");
-		SudokuUtil.imprimeMatriz(matrizInferencia);
-		int celulasVaziasAntes = SudokuUtil.qtdCelulasVazias(matrizInferencia);
-		System.out.println("Qtd celulas antes = "+celulasVaziasAntes);
-
-		matrizInferencia[0][8] = 9;
-		matrizInferencia[4][8] = 2;
-
-		sudoku.testaSolucao(matrizInferencia);
-		int celulasVaziasDepois = SudokuUtil.qtdCelulasVazias(matrizInferencia);
-		System.out.println("Qtd celulas depois = "+celulasVaziasDepois);
+		Celula02Possibilidades celPossibs = null;
+		int[][] matrizTeste = matriz.clone();
+		Sudoku sudokuTeste = null;
 		
-		if(celulasVaziasDepois < celulasVaziasAntes) {
-			System.out.println("Funcionou");
-		} else {
-			matrizInferencia[0][8] = 2;
-			matrizInferencia[4][8] = 9;
+		for (int i = 0; i < listaPossibs.size(); i++) {
+			celPossibs = listaPossibs.get(i);
+			matrizTeste[celPossibs.getX()][celPossibs.getY()] = celPossibs.getPossibilidade1();
+			sudokuTeste = new Sudoku(matriz.length, matriz[0].length, matrizTeste);
+			try {
+				if(sudokuTeste.testaSolucao(matrizTeste)) {
+					matriz[celPossibs.getX()][celPossibs.getY()] = celPossibs.getPossibilidade1();
+				}	
+			} catch (Exception e) {
+				matriz[celPossibs.getX()][celPossibs.getY()] = celPossibs.getPossibilidade2();
+			}
 		}
-		
 	}
 	
 	/**
@@ -217,7 +218,7 @@ public class Sudoku {
 	 * @param matriz
 	 * @return
 	 */
-	public void regra01(int[][] matriz) {
+	public void regra01(int[][] matriz) throws Exception {
 		//
 		SudokuUtil.imprimeMatrizPossibilidades9X9(matriz);
 		//
@@ -231,7 +232,7 @@ public class Sudoku {
 	 * 
 	 * @param matriz
 	 */
-	public void regra04(int[][] matriz) {
+	public void regra04(int[][] matriz) throws Exception {
 		int coluna = -1;
 		for (int j = 0; j < matriz.length; j++) {
 			if(SudokuUtil.existeColuna01PosicaoRestante(j, matriz)) {
@@ -243,12 +244,12 @@ public class Sudoku {
 		}
 	}	
 
-	public void regra05(int[][] matriz) {
+	public void regra05(int[][] matriz) throws Exception {
 		regra05Linha(matriz);
 		regra05Coluna(matriz);
 	}
 	
-	public void regra05Linha(int[][] matriz) {
+	public void regra05Linha(int[][] matriz) throws Exception {
 		int linha = -1;
 		for (int i = 0; i < matriz.length; i++) {
 			if(SudokuUtil.existeLinha01PosicaoRestante(i, matriz)) {
@@ -259,7 +260,7 @@ public class Sudoku {
 		}
 	}	
 	
-	public void regra05Coluna(int[][] matriz) {
+	public void regra05Coluna(int[][] matriz) throws Exception {
 		int coluna = -1;
 		for (int i = 0; i < matriz.length; i++) {
 			if(SudokuUtil.existeColuna01PosicaoRestante(i, matriz)) {
@@ -281,7 +282,7 @@ public class Sudoku {
 	 * @param matriz
 	 */
 	// TODO Reduzir de 18 para 15
-	public void regra06Linha(int[][] matriz) {
+	public void regra06Linha(int[][] matriz) throws Exception {
 		int linhaAnalisada = -1;
 		int colunaVazia01 = -1;
 		int colunaVazia02 = -1;
@@ -338,7 +339,7 @@ public class Sudoku {
 	 * @param matriz
 	 */
 	// TODO Reduzir de 18 para 15
-	public void regra06Coluna(int[][] matriz) {
+	public void regra06Coluna(int[][] matriz) throws Exception {
 		int colunaAnalisada = -1;
 		int linhaVazia01 = -1;
 		int linhaVazia02 = -1;
@@ -393,7 +394,7 @@ public class Sudoku {
 	}	
 	
 	// TODO Reduzir de 41 para 15
-	public void regra07(int[][] matriz) {
+	public void regra07(int[][] matriz) throws Exception {
 		int linhaAnalisada = -1;
 		int colunaVazia01 = -1;
 		int colunaVazia02 = -1;
@@ -462,7 +463,7 @@ public class Sudoku {
 		}	
 	}	
 	
-	public void regra08(int[][] matriz) {
+	public void regra08(int[][] matriz) throws Exception {
 		Posicao pos = null;
 		
 		if(SudokuUtil.existeQuadrante01PosicaoRestante(matriz)) {
@@ -473,7 +474,7 @@ public class Sudoku {
 		}
 	}
 
-	public void regra09(int[][] matriz) {
+	public void regra09(int[][] matriz) throws Exception {
 		if(SudokuUtil.existeQuadrante02PosicoesRestantes(matriz)) {
 			SudokuUtil.resolveQuadrante02PosicoesRestantes(matriz);
 		}
@@ -491,7 +492,7 @@ public class Sudoku {
 		regra10CamadaHorizontal03(matriz);
 	}*/
 
-	public void regra11(int[][] matriz) {
+	public void regra11(int[][] matriz) throws Exception  {
 		//
 		List<Integer> linhasPossiveis = new ArrayList<>();
 		linhasPossiveis.add(0);
@@ -518,20 +519,35 @@ public class Sudoku {
 	}
 	
 	// TODO Implementar
-	public void regra12(int[][] matriz) {
+	public void regra12(int[][] matriz) throws Exception {
 		List<Integer> listaColunas = SudokuUtil.retornaColunasQtdPosicoesRestantes(3, matriz);
+
 		if(!listaColunas.isEmpty()) {
-			listaColunas.forEach(col->SudokuUtil.resolveColuna03PosicoesRestantes(matriz, col));
+			listaColunas.forEach(col->{
+				try {
+					SudokuUtil.resolveColuna03PosicoesRestantes(matriz, col);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			});
 		}
 		
 		listaColunas = SudokuUtil.retornaColunasQtdPosicoesRestantes(2, matriz);
 		if(!listaColunas.isEmpty()) {
-			listaColunas.forEach(col->SudokuUtil.resolveColuna02PosicoesRestantes(matriz, col));
+			listaColunas.forEach(col->{
+				try {
+					SudokuUtil.resolveColuna02PosicoesRestantes(matriz, col);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			});
 		}
 		
 	}
 	
-	public void regra13(int[][] matriz) {
+	public void regra13(int[][] matriz) throws Exception {
 
 		List<Integer> colunasPossiveis = new ArrayList<>();
 		colunasPossiveis.add(0);
@@ -552,13 +568,14 @@ public class Sudoku {
 		regra13Quadrantes369(matriz, colunasPossiveis);
 	}
 
-	public void regra14(int[][] matriz) {
+	public void regra14(int[][] matriz) throws Exception {
 
 		List<Integer> colunasPossiveis = new ArrayList<>();
 		colunasPossiveis.add(0);
 		colunasPossiveis.add(1);
 		colunasPossiveis.add(2);
-		regra14Quadrantes417(matriz, colunasPossiveis);
+		// TODO Ajustar esta regra 
+		//regra14Quadrantes417(matriz, colunasPossiveis);
 		
 		
 		List<Integer> linhasPossiveis = new ArrayList<>();
@@ -570,7 +587,7 @@ public class Sudoku {
 	}
 	
 	// TODO Reduzir de 65 para 15
-	public void regra13Quadrantes147(int[][] matriz, List<Integer> colunasPossiveis) {
+	public void regra13Quadrantes147(int[][] matriz, List<Integer> colunasPossiveis) throws Exception {
 		// Quadrantes 1, 4 e 7 
 		List<Integer> listaElemQuad01 = SudokuUtil.retornaElementosQuadrante(1, matriz);
 		
@@ -690,7 +707,7 @@ public class Sudoku {
 		}
 	}
 	
-	public void regra13Quadrantes258(int[][] matriz, List<Integer> colunasPossiveis) {
+	public void regra13Quadrantes258(int[][] matriz, List<Integer> colunasPossiveis) throws Exception {
 		// Quadrantes 2, 5 e 8 
 		List<Integer> listaElemQuad01 = SudokuUtil.retornaElementosQuadrante(2, matriz);
 		
@@ -811,7 +828,7 @@ public class Sudoku {
 		}
 	}
 	
-	public void regra13Quadrantes369(int[][] matriz, List<Integer> colunasPossiveis) {
+	public void regra13Quadrantes369(int[][] matriz, List<Integer> colunasPossiveis) throws Exception {
 		// Quadrantes 3, 6 e 9 
 		List<Integer> listaElemQuad01 = SudokuUtil.retornaElementosQuadrante(3, matriz);
 		
@@ -931,7 +948,7 @@ public class Sudoku {
 		}
 	}	
 	
-	public void regra14Quadrantes417(int[][] matriz, List<Integer> colunasPossiveis) {
+	public void regra14Quadrantes417(int[][] matriz, List<Integer> colunasPossiveis) throws Exception {
 		// Quadrantes 4, 1 e 7 
 		List<Integer> listaElemQuad01 = SudokuUtil.retornaElementosQuadrante(4, matriz);
 		
@@ -1086,7 +1103,7 @@ public class Sudoku {
 	}	
 
 	// TODO Ajustar esta regra 
-	public void regra14Quadrantes321(int[][] matriz, List<Integer> linhasPossiveis) {
+	public void regra14Quadrantes321(int[][] matriz, List<Integer> linhasPossiveis) throws Exception {
 		// Quadrantes 3, 2 e 1 
 		List<Integer> listaElemQuad03 = SudokuUtil.retornaElementosQuadrante(3, matriz);
 		
@@ -1246,7 +1263,7 @@ public class Sudoku {
 	}	
 	
 	// TODO Reduzir de 65 para 15
-	public void regra11Camada01(int[][] matriz, List<Integer> linhasPossiveis) {
+	public void regra11Camada01(int[][] matriz, List<Integer> linhasPossiveis) throws Exception {
 		// Quadrantes 1, 2 e 3 
 		List<Integer> listaElemQuad01 = SudokuUtil.retornaElementosQuadrante(1, matriz);
 		
@@ -1366,7 +1383,7 @@ public class Sudoku {
 		}
 	}
 
-	public void regra11Camada02(int[][] matriz, List<Integer> linhasPossiveis) {
+	public void regra11Camada02(int[][] matriz, List<Integer> linhasPossiveis) throws Exception {
 		// Quadrantes 4, 5 e 6 
 		List<Integer> listaElemQuad01 = SudokuUtil.retornaElementosQuadrante(4, matriz);
 		
@@ -1485,7 +1502,7 @@ public class Sudoku {
 		}
 	}
 
-	public void regra11Camada03(int[][] matriz, List<Integer> linhasPossiveis) {
+	public void regra11Camada03(int[][] matriz, List<Integer> linhasPossiveis) throws Exception {
 		// Quadrantes 7, 8 e 9 
 		List<Integer> listaElemQuad01 = SudokuUtil.retornaElementosQuadrante(7, matriz);
 		
@@ -1665,7 +1682,7 @@ public class Sudoku {
 	
 	public void regra10AnalisaCamadaHorizontalQuadranteNaoPreenchido(
 		int[][] matriz, List<Integer> linhasPossiveis, int numeroAnalisado,  
-		int linhaNumeroAnalisado, int quadranteNaoPreenchido) {
+		int linhaNumeroAnalisado, int quadranteNaoPreenchido) throws Exception {
 		
 		int colunaNumeroAnalisado = -1;
 		
@@ -1746,7 +1763,7 @@ public class Sudoku {
 	}
 	*/
 	
-	public void regra02(int[][] matriz) {
+	public void regra02(int[][] matriz) throws Exception {
 		// Analisa os quadrantes 1,2,3
 		analisaCamadaHorizontal01DoisQuadrantesPreenchidos(matriz);
 		
@@ -1766,7 +1783,7 @@ public class Sudoku {
 		analisaCamadaHorizontal03UmQuadrantePreenchido(matriz);
 	}
 	
-	public void analisaCamadaHorizontal01DoisQuadrantesPreenchidos(int[][] matriz) {
+	public void analisaCamadaHorizontal01DoisQuadrantesPreenchidos(int[][] matriz) throws Exception {
 		List<Integer> linhasPossiveis = new ArrayList<>();
 		linhasPossiveis.add(0); 
 		linhasPossiveis.add(1); 
@@ -1775,7 +1792,7 @@ public class Sudoku {
 		analisaCamadaHorizontal02QuadrantesPreenchidos(matriz, linhasPossiveis);
 	}
 
-	public void analisaCamadaHorizontal01UmQuadrantePreenchido(int[][] matriz) {
+	public void analisaCamadaHorizontal01UmQuadrantePreenchido(int[][] matriz) throws Exception {
 		List<Integer> linhasPossiveis = new ArrayList<>();
 		linhasPossiveis.add(0); 
 		linhasPossiveis.add(1); 
@@ -1784,7 +1801,7 @@ public class Sudoku {
 		analisaCamadaHorizontal01QuadrantePreenchido(matriz, linhasPossiveis);
 	}
 
-	public void analisaCamadaHorizontal02UmQuadrantePreenchido(int[][] matriz) {
+	public void analisaCamadaHorizontal02UmQuadrantePreenchido(int[][] matriz) throws Exception {
 		List<Integer> linhasPossiveis = new ArrayList<>();
 		linhasPossiveis.add(3); 
 		linhasPossiveis.add(4); 
@@ -1793,7 +1810,7 @@ public class Sudoku {
 		analisaCamadaHorizontal01QuadrantePreenchido(matriz, linhasPossiveis);
 	}
 	
-	public void analisaCamadaHorizontal03UmQuadrantePreenchido(int[][] matriz) {
+	public void analisaCamadaHorizontal03UmQuadrantePreenchido(int[][] matriz) throws Exception {
 		List<Integer> linhasPossiveis = new ArrayList<>();
 		linhasPossiveis.add(6); 
 		linhasPossiveis.add(7); 
@@ -1802,7 +1819,7 @@ public class Sudoku {
 		analisaCamadaHorizontal01QuadrantePreenchido(matriz, linhasPossiveis);
 	}
 	
-	public void analisaCamadaHorizontal02DoisQuadrantesPreenchidos(int[][] matriz) {
+	public void analisaCamadaHorizontal02DoisQuadrantesPreenchidos(int[][] matriz) throws Exception {
 		List<Integer> linhasPossiveis = new ArrayList<>();
 		linhasPossiveis.add(3); 
 		linhasPossiveis.add(4); 
@@ -1811,7 +1828,7 @@ public class Sudoku {
 		analisaCamadaHorizontal02QuadrantesPreenchidos(matriz, linhasPossiveis);
 	}
 	
-	public void analisaCamadaHorizontal03DoisQuadrantesPreenchidos(int[][] matriz) {
+	public void analisaCamadaHorizontal03DoisQuadrantesPreenchidos(int[][] matriz) throws Exception {
 		List<Integer> linhasPossiveis = new ArrayList<>();
 		linhasPossiveis.add(6); 
 		linhasPossiveis.add(7); 
@@ -1820,7 +1837,7 @@ public class Sudoku {
 		analisaCamadaHorizontal02QuadrantesPreenchidos(matriz, linhasPossiveis);
 	}
 	
-	public void regra03(int[][] matriz) {
+	public void regra03(int[][] matriz) throws Exception {
 
 		// Analisa os quadrantes 1,4,7
 		analisaCamadaVertical01DoisQuadrantesPreenchidos(matriz);
@@ -1841,7 +1858,7 @@ public class Sudoku {
 		analisaCamadaVertical03UmQuadrantePreenchido(matriz);
 	}
 	
-	public void analisaCamadaVertical01DoisQuadrantesPreenchidos(int[][] matriz) {
+	public void analisaCamadaVertical01DoisQuadrantesPreenchidos(int[][] matriz) throws Exception {
 		List<Integer> colunasPossiveis = new ArrayList<>();
 		colunasPossiveis.add(0); 
 		colunasPossiveis.add(1); 
@@ -1850,7 +1867,7 @@ public class Sudoku {
 		analisaCamadaVertical02QuadrantesPreenhidos(matriz, colunasPossiveis);
 	}
 	
-	public void analisaCamadaVertical02DoisQuadrantesPreenchidos(int[][] matriz) {
+	public void analisaCamadaVertical02DoisQuadrantesPreenchidos(int[][] matriz) throws Exception {
 		List<Integer> colunasPossiveis = new ArrayList<>();
 		colunasPossiveis.add(3); 
 		colunasPossiveis.add(4); 
@@ -1859,7 +1876,7 @@ public class Sudoku {
 		analisaCamadaVertical02QuadrantesPreenhidos(matriz, colunasPossiveis);
 	}
 	
-	public void analisaCamadaVertical03DoisQuadrantesPreenchidos(int[][] matriz) {
+	public void analisaCamadaVertical03DoisQuadrantesPreenchidos(int[][] matriz) throws Exception {
 		List<Integer> colunasPossiveis = new ArrayList<>();
 		colunasPossiveis.add(6); 
 		colunasPossiveis.add(7); 
@@ -1868,7 +1885,7 @@ public class Sudoku {
 		analisaCamadaVertical02QuadrantesPreenhidos(matriz, colunasPossiveis);
 	}
 
-	public void analisaCamadaVertical01UmQuadrantePreenchido(int[][] matriz) {
+	public void analisaCamadaVertical01UmQuadrantePreenchido(int[][] matriz) throws Exception {
 		List<Integer> colunasPossiveis = new ArrayList<>();
 		colunasPossiveis.add(0); 
 		colunasPossiveis.add(1); 
@@ -1877,7 +1894,7 @@ public class Sudoku {
 		analisaCamadaVerticalUmQuadrantePreenchido(matriz, colunasPossiveis);
 	}
 
-	public void analisaCamadaVertical02UmQuadrantePreenchido(int[][] matriz) {
+	public void analisaCamadaVertical02UmQuadrantePreenchido(int[][] matriz) throws Exception {
 		List<Integer> colunasPossiveis = new ArrayList<>();
 		colunasPossiveis.add(3); 
 		colunasPossiveis.add(4); 
@@ -1886,7 +1903,7 @@ public class Sudoku {
 		analisaCamadaVerticalUmQuadrantePreenchido(matriz, colunasPossiveis);
 	}
 	
-	public void analisaCamadaVertical03UmQuadrantePreenchido(int[][] matriz) {
+	public void analisaCamadaVertical03UmQuadrantePreenchido(int[][] matriz) throws Exception {
 		List<Integer> colunasPossiveis = new ArrayList<>();
 		colunasPossiveis.add(6); 
 		colunasPossiveis.add(7); 
@@ -2034,7 +2051,7 @@ public class Sudoku {
 	
 	private void analisaCamadaHorizontal01CelulaPrenchida(
 			int[][] matriz, List<Integer> colunasQuadrante,
-			int numeroAnalisado, int linhaFalta, int colunaFalta) {
+			int numeroAnalisado, int linhaFalta, int colunaFalta) throws Exception {
 	
 		int colunaAnalisar01 = -1;
 		int colunaAnalisar02 = -1;
@@ -2072,7 +2089,7 @@ public class Sudoku {
 
 	private void analisaCamadaHorizontalNenhumaCelulaPrenchida(
 			int[][] matriz, List<Integer> colunasQuadrante,
-			int numeroAnalisado, int linhaFalta, int colunaFalta) {
+			int numeroAnalisado, int linhaFalta, int colunaFalta) throws Exception {
 	
 		int colunaAnalisar01 = -1;
 		int colunaAnalisar02 = -1;
@@ -2102,7 +2119,7 @@ public class Sudoku {
 	private void analisaCamadaVertical01CelulaPrenchida(
 			int[][] matriz,  
 			List<Integer> linhasQuadrante,
-			int numeroAnalisado, int colunaFalta) {
+			int numeroAnalisado, int colunaFalta) throws Exception {
 	
 		int linhaAnalisar01 = -1;
 		int linhaAnalisar02 = -1;
@@ -2143,14 +2160,14 @@ public class Sudoku {
 	private void analisaCamadaHorizontal02CelulasPrenchidas(
 			int[][] matriz, 
 			List<Integer> colunasQuadrante,
-			int numeroAnalisado, int linhaFalta) {
+			int numeroAnalisado, int linhaFalta) throws Exception {
 			
 		int colunaFalta = SudokuUtil.retornaColunaVaziaNaLinhaNoQuadrante(linhaFalta, colunasQuadrante, matriz);
 		SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaFalta, colunaFalta, matriz, REGRA02);
 	}
 
 	private void analisaCamadaVertical02CelulasPrenchidas(
-		int[][] matriz, List<Integer> colunasQuadrante, int numeroAnalisado, int colunaFalta) {
+		int[][] matriz, List<Integer> colunasQuadrante, int numeroAnalisado, int colunaFalta) throws Exception {
 
 		int linhaFalta = SudokuUtil.retornaLinhaVaziaNaColunaNoQuadrante(colunaFalta, colunasQuadrante, matriz);
 		SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaFalta, colunaFalta, matriz, REGRA03);
@@ -2224,7 +2241,7 @@ public class Sudoku {
 	private void analisaCamadaHorizontal01LinhaPreenchida(
 		int[][] matriz,   
 		int numeroAnalisado, int linhaQuadrante02, 
-		int quadranteNaoPreenchido02) {
+		int quadranteNaoPreenchido02) throws Exception {
 		
 		int colunaVazia01 = -1;
 		int colunaVazia02 = -1;
@@ -2261,7 +2278,7 @@ public class Sudoku {
 	private void analisaCamadaVertical01LinhaPreenchida(
 		int[][] matriz,   
 		int numeroAnalisado, int colunaQuadrante02, 
-		int quadranteNaoPreenchido02) {
+		int quadranteNaoPreenchido02) throws Exception {
 		
 		int linhaVazia01 = -1;
 		int linhaVazia02 = -1;
@@ -2300,7 +2317,7 @@ public class Sudoku {
 	
 	private void analisaCamadaHorizontal02LinhasPreenchidas(
 		int[][] matriz, List<Integer> colunasQuadrante, 
-		int numeroAnalisado, int linhaQuadrante02) {
+		int numeroAnalisado, int linhaQuadrante02) throws Exception {
 		
 		int colunaVazia01 = -1;
 
@@ -2319,7 +2336,7 @@ public class Sudoku {
 
 	private void analisaCamadaVertical02LinhasPreenchidas(
 		int[][] matriz, List<Integer> linhasQuadrante, 
-		int numeroAnalisado, int colunaQuadrante02) {
+		int numeroAnalisado, int colunaQuadrante02) throws Exception {
 
 		int linhaVazia01 = -1;
 
@@ -2336,7 +2353,7 @@ public class Sudoku {
 		SudokuUtil.setValorNaLinhaColuna(numeroAnalisado, linhaVazia01, colunaQuadrante02, matriz, REGRA02_AV_01_QUAD);
 	}
 	
-	private void analisaCamadaHorizontal01QuadrantePreenchido(int[][] matriz, List<Integer> linhasPossiveis) {
+	private void analisaCamadaHorizontal01QuadrantePreenchido(int[][] matriz, List<Integer> linhasPossiveis) throws Exception {
 		int numeroAnalisado = 0;
 		int quadrante1 = 0;
 		int quadrante2 = 0;
@@ -2451,7 +2468,7 @@ public class Sudoku {
 		return listaPosicoes;
 	}	
 
-	private void analisaCamadaVerticalUmQuadrantePreenchido(int[][] matriz, List<Integer> colunasPossiveis) {
+	private void analisaCamadaVerticalUmQuadrantePreenchido(int[][] matriz, List<Integer> colunasPossiveis) throws Exception {
 		int numeroAnalisado = 0;
 		int quadrante1 = 0;
 		int quadrante2 = 0;
@@ -2612,7 +2629,7 @@ public class Sudoku {
 		}
 	}
 	
-	private void analisaCamadaHorizontal02QuadrantesPreenchidos(int[][] matriz, List<Integer> linhasPossiveis) {
+	private void analisaCamadaHorizontal02QuadrantesPreenchidos(int[][] matriz, List<Integer> linhasPossiveis) throws Exception {
 		int numeroAnalisado = 0;
 		int quadrante1 = 0;
 		int quadrante2 = 0;
@@ -2690,7 +2707,7 @@ public class Sudoku {
 		}	
 	}
 
-	private void analisaCamadaVertical02QuadrantesPreenhidos(int[][] matriz, List<Integer> colunasPossiveis) {
+	private void analisaCamadaVertical02QuadrantesPreenhidos(int[][] matriz, List<Integer> colunasPossiveis) throws Exception {
 		//
 		int numeroAnalisado = 0;
 		int quadrante1 = 0;
